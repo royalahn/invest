@@ -14,3 +14,8 @@ node_modules/
 
 # Antigravity Cache
 cache/
+
+# Test Outputs
+out*.txt
+err*.txt
+empty_test.txt
