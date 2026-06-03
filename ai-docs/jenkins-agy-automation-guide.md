@@ -153,7 +153,7 @@ agy -p \
 3. 매크로: 한미 금리 동향, 환율(USD/KRW), 유가, 주요 경제지표 결과값
 
 ## 리포트 작성 규칙 (매우 중요)
-- template/base_template.html을 복사하여 daily/daily_${TODAY}.html 로 생성
+- template/base_template.html을 복사하여 daily/${FILENAME} 로 생성
 - <main> 영역에 들어갈 리포트는 **반드시 다음 지침을 따라 길고 상세하게 작성**할 것:
   1. 각 분석 섹션(한국, 미국, 매크로)은 최소 3~4개의 상세한 문단으로 구성할 것.
   2. 단순한 사실 나열을 넘어 "왜 올랐는지/내렸는지(배경)"와 "시장의 해석(전망)"을 포함할 것.
@@ -169,7 +169,7 @@ agy -p \
 - 수치 데이터는 표(Table)로 가독성 있게 구성하고, Tailwind CSS를 활용해 모던하게 디자인할 것.
 
 ## 등록 및 배포
-- daily.json에 새 문서 등록 (category: "시장동향", date: "${TODAY}")
+- daily.json에 새 문서 등록 (category: "시장동향", date: "${TODAY}", filename: "daily/${FILENAME}")
 - 완료 후 다음 명령어 실행:
   git add -A
   git commit -m "docs: 일일 투자 인사이트 (${TODAY})"
@@ -233,11 +233,6 @@ REPO_DIR="${WORKSPACE}/invest"
 TODAY=$(date +%Y-%m-%d)
 FILENAME="daily_${TODAY}.html"
 
-echo "=========================================="
-echo "📊 일일 투자 인사이트 생성 시작"
-echo "📅 날짜: ${TODAY}"
-echo "=========================================="
-
 # ── Step 1: 저장소 준비 ──
 echo "📥 저장소 준비 중..."
 if [ -d "$REPO_DIR/.git" ]; then
@@ -250,11 +245,18 @@ else
     cd "$REPO_DIR"
 fi
 
-# ── Step 2: 중복 실행 방지 ──
-if [ -f "daily/${FILENAME}" ]; then
-    echo "⚠️ daily/${FILENAME} 이미 존재합니다. 스킵합니다."
-    exit 0
-fi
+# ── Step 2: 파일명 중복 체크 (Numbering Postfix) ──
+COUNTER=2
+while [ -f "daily/${FILENAME}" ]; do
+    FILENAME="daily_${TODAY}_${COUNTER}.html"
+    COUNTER=$((COUNTER + 1))
+done
+
+echo "=========================================="
+echo "📊 일일 투자 인사이트 생성 시작"
+echo "📅 날짜: ${TODAY}"
+echo "📝 파일명: daily/${FILENAME}"
+echo "=========================================="
 
 # ── Step 3: agy 실행 ──
 echo "🤖 agy 실행 중... (타임아웃: 15분)"
@@ -271,7 +273,7 @@ agy -p \
 3. 매크로: 한미 금리 동향, 환율(USD/KRW), 유가, 주요 경제지표 결과값
 
 ## 리포트 작성 규칙 (매우 중요)
-- template/base_template.html을 복사하여 daily/daily_${TODAY}.html 로 생성
+- template/base_template.html을 복사하여 daily/${FILENAME} 로 생성
 - <main> 영역에 들어갈 리포트는 **반드시 다음 지침을 따라 길고 상세하게 작성**할 것:
   1. 각 분석 섹션(한국, 미국, 매크로)은 최소 3~4개의 상세한 문단으로 구성할 것.
   2. 단순한 사실 나열을 넘어 "왜 올랐는지/내렸는지(배경)"와 "시장의 해석(전망)"을 포함할 것.
@@ -287,7 +289,7 @@ agy -p \
 - 수치 데이터는 표(Table)로 가독성 있게 구성하고, Tailwind CSS를 활용해 모던하게 디자인할 것.
 
 ## 등록 및 배포
-- daily.json에 새 문서 등록 (category: "시장동향", date: "${TODAY}")
+- daily.json에 새 문서 등록 (category: "시장동향", date: "${TODAY}", filename: "daily/${FILENAME}")
 - 완료 후:
   git add -A
   git commit -m "docs: 일일 투자 인사이트 (${TODAY})"
