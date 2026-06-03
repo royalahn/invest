@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 인프라 투자 분석 리포트 - Invest Insight</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                        mono: ['"Cascadia Mono"', 'Pretendard', 'monospace'],
+                    },
+                    colors: {
+                        gray: {
+                            900: '#0f1115',
+                            800: '#161b22',
+                            700: '#21262d',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // 초기 테마 설정 (기본값 Light)
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            updateThemeIcon();
+        }
+        
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            if (sunIcon && moonIcon) {
+                sunIcon.style.display = isDark ? 'block' : 'none';
+                moonIcon.style.display = isDark ? 'none' : 'block';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        html, body {
+            overflow-x: hidden;
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            word-break: keep-all;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-header {
+            background: rgba(15, 17, 21, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #0ea5e9, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
+        }
+        .dark .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+        }
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .light-card-hover:hover {
+            box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1), 0 10px 10px -5px rgba(14, 165, 233, 0.04);
+            border-color: #7dd3fc;
+        }
+        .dark .dark-card-hover:hover {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.1);
+            border-color: #38bdf8;
+        }
+        .glow-bg {
+            position: absolute;
+            width: 100%;
+            max-width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        .dark .glow-bg {
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(15, 17, 21, 0) 70%);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Terminal window styles */
+        .terminal-window {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .dark .terminal-window {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid #21262d;
+        }
+        .terminal-header {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #e2e8f0;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        .dark .terminal-header {
+            background: #0f1115;
+            border-bottom: 1px solid #21262d;
+        }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        pre, code, .code-block { font-family: "Cascadia Mono", "Pretendard", monospace; }
+        
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+
+        /* Custom styles for this report */
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .bull-tag {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .dark .bull-tag {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .bear-tag {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .dark .bear-tag {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .position-buy {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+        .dark .position-buy {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+        .position-hold {
+            background: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
+        }
+        .dark .position-hold {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+        .position-neutral {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+        .dark .position-neutral {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+        .timeline-line {
+            position: relative;
+        }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 2.5rem;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #0ea5e9, #6366f1);
+            opacity: 0.3;
+        }
+        .timeline-line:last-child::before {
+            display: none;
+        }
+        .data-highlight {
+            font-family: "Cascadia Mono", monospace;
+            font-weight: 600;
+        }
+        .ticker-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.375rem;
+            font-family: "Cascadia Mono", monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: rgba(99, 102, 241, 0.1);
+            color: #4f46e5;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .dark .ticker-badge {
+            background: rgba(129, 140, 248, 0.15);
+            color: #a5b4fc;
+            border: 1px solid rgba(129, 140, 248, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-[#0f1115] text-slate-900 dark:text-e2e8f0 min-h-screen flex flex-col selection:bg-sky-200 selection:text-sky-900 dark:selection:bg-sky-500/30 dark:selection:text-sky-200">
+
+    <div class="glow-bg"></div>
+
+    <!-- Header Section -->
+    <header class="glass-header sticky top-0 z-50 py-4 px-6 sm:px-12 lg:px-24">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    AI Infra <span class="gradient-text">Report</span>
+                </h1>
+            </div>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-8 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                    <!-- 페이지 이동에 필요한 네비게이션을 여기에 작성하세요 -->
+                </ul>
+            </nav>
+            <div class="flex items-center gap-4">
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle Theme">
+                    <!-- Sun Icon (shows in dark mode) -->
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <!-- Moon Icon (shows in light mode) -->
+                    <svg id="moon-icon" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                
+                <a href="https://github.com/royalahn/invest" target="_blank" class="hidden sm:flex px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-medium text-sm transition-all border border-transparent dark:border-white/10 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <main class="flex-grow pb-24 px-6 sm:px-12 lg:px-24 pt-12">
+        <div class="max-w-7xl mx-auto">
+
+            <!-- Hero Section -->
+            <div class="reveal text-center mb-16">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-sm font-semibold mb-6">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>시황분석 &middot; 2026.06.03</span>
+                </div>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 leading-tight">
+                    AI 인프라 투자 <span class="gradient-text">종합 분석 리포트</span>
+                </h2>
+                <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-6">
+                    반도체 &middot; 서버 &middot; 광통신 하드웨어 중심의 시장 주도주 분석과 실전 매수 전략
+                </p>
+                <div class="flex flex-wrap justify-center items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
+                    <span class="flex items-center gap-1.5"><i class="fa-brands fa-youtube text-red-500"></i> 올랜도 킴 미국주식</span>
+                    <span>&middot;</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-eye"></i> 2.6만 조회</span>
+                    <span>&middot;</span>
+                    <a href="https://youtu.be/oqSSFBnSysQ?si=EXqEFUt36XIwn-sl" target="_blank" class="flex items-center gap-1.5 text-sky-500 hover:text-sky-400 transition-colors">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> 원본 영상
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section 1: Executive Summary -->
+            <section class="reveal mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center text-white text-sm font-bold shadow-lg">1</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">핵심 요약 <span class="text-slate-400 dark:text-slate-500 font-medium text-base">Executive Summary</span></h3>
+                </div>
+                <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 md:p-8 feature-card light-card-hover dark-card-hover">
+                    <div class="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
+                        <p>현재 주식 시장은 <strong class="text-slate-900 dark:text-white">AI 인프라(반도체, 서버, 광통신) 하드웨어 기업</strong>들이 상승을 주도하는 강한 쏠림 장세를 보이고 있습니다.</p>
+                        <p>기존 보유자는 추세가 꺾이기 전까지 <strong class="text-emerald-600 dark:text-emerald-400">'지속 보유(Hold)'</strong> 전략을 유지해야 하며, 신규 진입자는 시장 폭(Market Breadth) 축소와 대형 IPO로 인한 유동성 흡수 리스크가 부각되는 <strong class="text-amber-600 dark:text-amber-400">6월 중순 이후의 조정을 매수 기회</strong>로 삼는 것이 유리합니다.</p>
+                    </div>
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <span class="section-badge bull-tag"><i class="fa-solid fa-arrow-trend-up"></i> AI 하드웨어 강세</span>
+                        <span class="section-badge bear-tag"><i class="fa-solid fa-triangle-exclamation"></i> 쏠림 리스크</span>
+                        <span class="section-badge" style="background: rgba(59,130,246,0.1); color: #2563eb; border: 1px solid rgba(59,130,246,0.2);"><i class="fa-solid fa-clock"></i> 6월 중순 조정 대기</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: 종목/자산 포지션 -->
+            <section class="reveal mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-lg">2</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">주요 종목 및 포지션</h3>
+                </div>
+
+                <!-- Buy/Hold -->
+                <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 md:p-8 mb-4 feature-card light-card-hover dark-card-hover">
+                    <div class="flex items-center gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold position-buy">
+                            <i class="fa-solid fa-circle-check mr-1"></i> 매수 / 지속 보유
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-xl p-4 border border-slate-100 dark:border-gray-700">
+                            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-microchip mr-1"></i> AI 반도체 &amp; 장비</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="ticker-badge">NVDA</span>
+                                <span class="ticker-badge">AVGO</span>
+                                <span class="ticker-badge">MU</span>
+                                <span class="ticker-badge">AMD</span>
+                                <span class="ticker-badge">INTC</span>
+                                <span class="ticker-badge">MRVL</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-xl p-4 border border-slate-100 dark:border-gray-700">
+                            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-server mr-1"></i> 서버 &amp; 광통신</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="ticker-badge">HPE</span>
+                                <span class="ticker-badge">DELL</span>
+                                <span class="ticker-badge">COHR</span>
+                                <span class="ticker-badge">LITE</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-xl p-4 border border-slate-100 dark:border-gray-700">
+                            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-bolt mr-1"></i> 개별 모멘텀</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="ticker-badge">IREN</span>
+                                <span class="ticker-badge">LLY</span>
+                                <span class="ticker-badge">VSAT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Neutral -->
+                <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 md:p-8 feature-card light-card-hover dark-card-hover">
+                    <div class="flex items-center gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold position-neutral">
+                            <i class="fa-solid fa-pause mr-1"></i> 중립 / 단기 관망
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-xl p-4 border border-slate-100 dark:border-gray-700">
+                            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-code mr-1"></i> 소프트웨어 / 어플리케이션</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="ticker-badge">MSFT</span>
+                                <span class="ticker-badge">ORCL</span>
+                                <span class="ticker-badge">PLTR</span>
+                                <span class="ticker-badge">CRM</span>
+                            </div>
+                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">단기 급등 후 차익 실현 출회 중</p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-xl p-4 border border-slate-100 dark:border-gray-700">
+                            <p class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-cloud mr-1"></i> 하이퍼스케일러</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="ticker-badge">GOOGL</span>
+                                <span class="ticker-badge">META</span>
+                                <span class="ticker-badge">AMZN</span>
+                            </div>
+                            <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">막대한 CapEx로 잉여현금흐름 감소 우려</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Bull/Bear Thesis -->
+            <section class="reveal mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center text-white text-sm font-bold shadow-lg">3</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">핵심 주장 및 논거 <span class="text-slate-400 dark:text-slate-500 font-medium text-base">Bull / Bear Thesis</span></h3>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- Bull -->
+                    <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-emerald-200 dark:border-emerald-500/20 p-6 md:p-8 feature-card">
+                        <div class="flex items-center gap-2 mb-5">
+                            <div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center">
+                                <i class="fa-solid fa-arrow-trend-up text-emerald-600 dark:text-emerald-400"></i>
+                            </div>
+                            <span class="font-bold text-emerald-700 dark:text-emerald-400 text-lg">Bull Thesis</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex gap-3">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">AI 인프라 투자 가속화</strong>
+                                    <p class="mt-1 text-slate-500 dark:text-slate-400">서버 장비와 광학 네트워크 수요 폭발. 젠슨 황의 마벨, 코히런트 언급이 AI 인프라 사이클의 다음 단계를 증명</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">실적으로 입증된 펀더멘털</strong>
+                                    <p class="mt-1 text-slate-500 dark:text-slate-400">HPE 등 서버 업체들의 기록적 어닝 서프라이즈로 장세의 실체를 수치로 증명</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">전력/물리적 인프라 수요 폭증</strong>
+                                    <p class="mt-1 text-slate-500 dark:text-slate-400">데이터센터 및 전력망 확장에 막대한 구리 필요 &rarr; 구리 가격 장기 우상향 전망</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Bear -->
+                    <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-red-200 dark:border-red-500/20 p-6 md:p-8 feature-card">
+                        <div class="flex items-center gap-2 mb-5">
+                            <div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-500/15 flex items-center justify-center">
+                                <i class="fa-solid fa-arrow-trend-down text-red-600 dark:text-red-400"></i>
+                            </div>
+                            <span class="font-bold text-red-700 dark:text-red-400 text-lg">Bear Thesis</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex gap-3">
+                                <i class="fa-solid fa-xmark-circle text-red-500 mt-0.5 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">극단적 쏠림 현상</strong>
+                                    <p class="mt-1 text-slate-500 dark:text-slate-400">6일 연속 하락 종목 수 > 상승 종목 수 (1996년 이후 전례 없는 위험 신호). 마이너스 마켓 브레드스 발생</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fa-solid fa-xmark-circle text-red-500 mt-0.5 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">빅테크 현금 흐름 고갈</strong>
+                                    <p class="mt-1 text-slate-500 dark:text-slate-400">알파벳 대규모 주식 발행 등, AI 인프라에 천문학적 비용 투입으로 FCF 급감 예상</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-3">
+                                <i class="fa-solid fa-xmark-circle text-red-500 mt-0.5 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">여름철 유동성 분산</strong>
+                                    <p class="mt-1 text-slate-500 dark:text-slate-400">스페이스X, 오픈AI, 앤트로픽 등 대규모 IPO가 기존 주식 시장 자금을 흡수해 단기 조정 유발 위험</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Data & Metrics -->
+            <section class="reveal mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold shadow-lg">4</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">정량적 데이터 <span class="text-slate-400 dark:text-slate-500 font-medium text-base">Data &amp; Metrics</span></h3>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 overflow-hidden feature-card light-card-hover dark-card-hover">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-gray-700/50 border-b border-slate-200 dark:border-gray-700">
+                                    <th class="text-left px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase text-xs tracking-wider">종목/항목</th>
+                                    <th class="text-left px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase text-xs tracking-wider">핵심 수치</th>
+                                    <th class="text-left px-6 py-4 font-semibold text-slate-500 dark:text-slate-400 uppercase text-xs tracking-wider">시사점</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-gray-700/50">
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                                        <span class="ticker-badge mr-2">GOOGL</span> 알파벳
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">
+                                        <span class="data-highlight text-red-600 dark:text-red-400">$800억</span> 주식 공모 (약 2% 희석)<br>
+                                        FCF: <span class="data-highlight">$730억</span> &rarr; <span class="data-highlight text-red-600 dark:text-red-400">$200억</span> 급감 예상
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">AI 설비 투자로 현금흐름 대폭 악화</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                                        <span class="ticker-badge mr-2">HPE</span> 휴렛팩커드
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">
+                                        2Q 매출 <span class="data-highlight text-emerald-600 dark:text-emerald-400">$106.8억</span> (예상 $97.9억 상회)<br>
+                                        EPS <span class="data-highlight">$0.79</span> / 네트워크 매출 <span class="data-highlight text-emerald-600 dark:text-emerald-400">+75%</span><br>
+                                        목표가 <span class="data-highlight">$23</span> &rarr; <span class="data-highlight text-emerald-600 dark:text-emerald-400">$75</span> 상향
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">기록적 어닝 서프라이즈</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                                        <i class="fa-solid fa-industry mr-1 text-slate-400"></i> AI CapEx
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">
+                                        2027년 <span class="data-highlight text-sky-600 dark:text-sky-400">$1조</span> 돌파<br>
+                                        2030년 말 <span class="data-highlight text-sky-600 dark:text-sky-400">$3~4조</span> 도달 예상
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">엔비디아 CFO 전망치 인용</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                                        <span class="ticker-badge mr-2">MRVL</span> 마벨
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">
+                                        젠슨 황 '1조 달러 기업' 언급 후 <span class="data-highlight text-emerald-600 dark:text-emerald-400">+30%</span> 급등
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">광학 연결(CPO) 핵심 수혜</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                                        <i class="fa-solid fa-cubes mr-1 text-slate-400"></i> 구리 가격
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">
+                                        Citi 전망: 1년 내 <span class="data-highlight text-amber-600 dark:text-amber-400">톤당 $15,000</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">데이터센터 전력망 구리 수요 폭증</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                                        <span class="ticker-badge mr-2">IREN</span> 아이리스 에너지
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">
+                                        AI 클라우드 매출 <span class="data-highlight">$1,730만</span> &rarr; <span class="data-highlight text-emerald-600 dark:text-emerald-400">$3,364만</span><br>
+                                        차트 '컵 앤 핸들' 패턴, 저항선 <span class="data-highlight">$75</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">채굴 &rarr; AI 클라우드 체질 전환</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                                        <span class="ticker-badge mr-2">VSAT</span> 비아셋
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">
+                                        1년간 <span class="data-highlight text-emerald-600 dark:text-emerald-400">+730%</span> 급등<br>
+                                        목표주가 <span class="data-highlight">$58</span> &rarr; <span class="data-highlight text-emerald-600 dark:text-emerald-400">$90</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">목표가 상향 조정</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                                        <i class="fa-solid fa-chart-pie mr-1 text-slate-400"></i> S&amp;P 500
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-700 dark:text-slate-300">
+                                        상위 10개 종목이 지수의 <span class="data-highlight text-red-600 dark:text-red-400">40%</span> 차지
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400">극단적 쏠림 현상 진행 중</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Timeline -->
+            <section class="reveal mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-sm font-bold shadow-lg">5</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">타임라인별 흐름 <span class="text-slate-400 dark:text-slate-500 font-medium text-base">Key Timeline</span></h3>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 md:p-8 feature-card light-card-hover dark-card-hover">
+                    <div class="space-y-0">
+                        <!-- Timeline Item -->
+                        <div class="timeline-line flex gap-4 pb-6">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-500/15 flex items-center justify-center mt-0.5">
+                                <i class="fa-solid fa-play text-sky-600 dark:text-sky-400 text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono font-bold text-sky-600 dark:text-sky-400">00:00 ~ 03:40</span>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">일간 시황 브리핑 &mdash; AI 하드웨어/반도체 강세 vs 소프트웨어 업종 하락 차별화 현상</p>
+                            </div>
+                        </div>
+                        <div class="timeline-line flex gap-4 pb-6">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/15 flex items-center justify-center mt-0.5">
+                                <i class="fa-solid fa-microchip text-indigo-600 dark:text-indigo-400 text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400">03:40 ~ 05:10</span>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">반도체 섹터 투자 전략 &mdash; 기존 보유자 홀딩 유지, 신규 진입은 6/15 이후 조정 대기</p>
+                            </div>
+                        </div>
+                        <div class="timeline-line flex gap-4 pb-6">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-500/15 flex items-center justify-center mt-0.5">
+                                <i class="fa-solid fa-chart-bar text-amber-600 dark:text-amber-400 text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono font-bold text-amber-600 dark:text-amber-400">05:10 ~ 13:28</span>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">S&amp;P 500 시장 폭(Breadth)의 역설적 축소 현상 및 시장 집중 리스크 분석</p>
+                            </div>
+                        </div>
+                        <div class="timeline-line flex gap-4 pb-6">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-500/15 flex items-center justify-center mt-0.5">
+                                <i class="fa-solid fa-building text-red-600 dark:text-red-400 text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono font-bold text-red-600 dark:text-red-400">13:28 ~ 18:40</span>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">하이퍼스케일러(알파벳 등)의 과도한 AI 설비 투자와 잉여현금흐름(FCF) 악화 이슈</p>
+                            </div>
+                        </div>
+                        <div class="timeline-line flex gap-4 pb-6">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-500/15 flex items-center justify-center mt-0.5">
+                                <i class="fa-solid fa-bolt-lightning text-orange-600 dark:text-orange-400 text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono font-bold text-orange-600 dark:text-orange-400">18:40 ~ 19:50</span>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">AI 데이터센터 전력망 구축에 따른 구리 수요 폭발 및 가격 전망</p>
+                            </div>
+                        </div>
+                        <div class="timeline-line flex gap-4 pb-6">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-500/15 flex items-center justify-center mt-0.5">
+                                <i class="fa-solid fa-coins text-purple-600 dark:text-purple-400 text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono font-bold text-purple-600 dark:text-purple-400">19:50 ~ 22:05</span>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">IREN (암호화폐 &rarr; AI 인프라 전환 기업) 재무 구조 및 차트 분석</p>
+                            </div>
+                        </div>
+                        <div class="timeline-line flex gap-4 pb-6">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-500/15 flex items-center justify-center mt-0.5">
+                                <i class="fa-solid fa-file-invoice-dollar text-emerald-600 dark:text-emerald-400 text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">22:05 ~ 26:20</span>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">HPE 어닝 서프라이즈 분석 및 JP모건 6월 추천주 (일라이릴리, 비아셋) 리뷰</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-500/15 flex items-center justify-center mt-0.5">
+                                <i class="fa-solid fa-rocket text-rose-600 dark:text-rose-400 text-xs"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-mono font-bold text-rose-600 dark:text-rose-400">26:20 ~ 30:34</span>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">스페이스X 등 대형 IPO 리스크 점검 및 광학 네트워크(마벨, 코히런트 등) 장비주 급등 배경</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Top Picks Table -->
+            <section class="reveal mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-sm font-bold shadow-lg">6</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">추천 종목 매수 가이드 <span class="text-slate-400 dark:text-slate-500 font-medium text-base">Top Picks</span></h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- HPE -->
+                    <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 feature-card light-card-hover dark-card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-lg">HPE</div>
+                                <div>
+                                    <p class="font-bold text-slate-900 dark:text-white">휴렛팩커드 엔터프라이즈</p>
+                                    <p class="text-xs text-slate-400">AI 서버 &middot; 가성비 픽</p>
+                                </div>
+                            </div>
+                            <span class="section-badge bull-tag text-xs">BUY</span>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">2분기 어닝 서프라이즈로 AI 에이전트/추론용 서버 폭발적 성장 증명. 델 대비 상대적으로 밸류에이션 부담 적음</p>
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-lg p-3 text-xs">
+                            <span class="text-slate-500 dark:text-slate-400"><i class="fa-solid fa-crosshairs mr-1"></i> 매수 전략:</span>
+                            <span class="text-slate-700 dark:text-slate-300 font-semibold"> $20대 후반~30대 초반 분할 진입</span>
+                        </div>
+                    </div>
+
+                    <!-- MRVL -->
+                    <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 feature-card light-card-hover dark-card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-lg">MRVL</div>
+                                <div>
+                                    <p class="font-bold text-slate-900 dark:text-white">마벨 테크놀로지</p>
+                                    <p class="text-xs text-slate-400">광통신 &middot; 차세대 주도주</p>
+                                </div>
+                            </div>
+                            <span class="section-badge bull-tag text-xs">BUY</span>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">칩 간 광학 연결(CPO) 필수 부품 공급. 젠슨 황이 직접 '1조 달러 기업' 후보로 언급한 AI 인프라 최대 수혜주</p>
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-lg p-3 text-xs">
+                            <span class="text-slate-500 dark:text-slate-400"><i class="fa-solid fa-crosshairs mr-1"></i> 매수 전략:</span>
+                            <span class="text-slate-700 dark:text-slate-300 font-semibold"> 기술적 돌파 후 눌림목 형성 시 비중 확대</span>
+                        </div>
+                    </div>
+
+                    <!-- IREN -->
+                    <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 feature-card light-card-hover dark-card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold shadow-lg">IREN</div>
+                                <div>
+                                    <p class="font-bold text-slate-900 dark:text-white">아이리스 에너지</p>
+                                    <p class="text-xs text-slate-400">클라우드 인프라 &middot; 고수익 픽</p>
+                                </div>
+                            </div>
+                            <span class="section-badge" style="background: rgba(245,158,11,0.1); color: #d97706; border: 1px solid rgba(245,158,11,0.2); font-size: 0.75rem;">HIGH RISK</span>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">비트코인 채굴에서 엔비디아 GPU 기반 AI 클라우드로 체질 전환. MS $97억 대형 계약 및 엔비디아 직접 투자 뒷받침</p>
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-lg p-3 text-xs">
+                            <span class="text-slate-500 dark:text-slate-400"><i class="fa-solid fa-crosshairs mr-1"></i> 매수 전략:</span>
+                            <span class="text-slate-700 dark:text-slate-300 font-semibold"> $75 저항선 돌파 확인 후 분할 매수</span>
+                        </div>
+                    </div>
+
+                    <!-- LLY -->
+                    <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 feature-card light-card-hover dark-card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-xs font-bold shadow-lg">LLY</div>
+                                <div>
+                                    <p class="font-bold text-slate-900 dark:text-white">일라이릴리</p>
+                                    <p class="text-xs text-slate-400">바이오/제약 &middot; 방어주 픽</p>
+                                </div>
+                            </div>
+                            <span class="section-badge" style="background: rgba(16,185,129,0.1); color: #059669; border: 1px solid rgba(16,185,129,0.2); font-size: 0.75rem;">HEDGE</span>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">비만 치료제(젭바운드) 의료보험 적용 확대 및 경구용 신약 개발 모멘텀. 기술주 급락 시 최고의 헤지 종목</p>
+                        <div class="bg-slate-50 dark:bg-gray-700/30 rounded-lg p-3 text-xs">
+                            <span class="text-slate-500 dark:text-slate-400"><i class="fa-solid fa-crosshairs mr-1"></i> 매수 전략:</span>
+                            <span class="text-slate-700 dark:text-slate-300 font-semibold"> 포트폴리오 변동성 축소를 위한 헤지용 편입</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: 종합 시사점 -->
+            <section class="reveal mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold shadow-lg">7</div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">종합 시사점 <span class="text-slate-400 dark:text-slate-500 font-medium text-base">Action Items</span></h3>
+                </div>
+
+                <!-- Warning Banner -->
+                <div class="bg-gradient-to-r from-red-50 to-amber-50 dark:from-red-500/5 dark:to-amber-500/5 border border-red-200 dark:border-red-500/20 rounded-2xl p-6 mb-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-red-700 dark:text-red-400 mb-1">기관 애널리스트 관점의 경고</p>
+                            <p class="text-sm text-red-600/80 dark:text-red-400/80">S&P 500은 상위 10개 종목이 지수의 40%를 차지하는 '기형적 상승'을 보이고 있으며, 하락 종목 수가 더 많은 상태입니다. <strong>오늘 당장 자금의 100%를 투입하는 것은 절대 금물</strong>입니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Action Item -->
+                    <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 feature-card light-card-hover dark-card-hover">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-bullseye text-sky-500"></i>
+                            <span class="font-bold text-slate-900 dark:text-white">투자 행동 지침</span>
+                        </div>
+                        <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                            <li class="flex gap-2">
+                                <i class="fa-solid fa-chevron-right text-sky-400 mt-1 flex-shrink-0 text-xs"></i>
+                                AI 하드웨어 인프라 <strong class="text-slate-900 dark:text-white">보유 중이라면</strong> 조기 차익실현 지양, 추세 끝까지 활용
+                            </li>
+                            <li class="flex gap-2">
+                                <i class="fa-solid fa-chevron-right text-sky-400 mt-1 flex-shrink-0 text-xs"></i>
+                                <strong class="text-slate-900 dark:text-white">현금 비중 높은 투자자</strong>는 추격 매수 지양, 6월 중후반 눌림목을 분할 매수 타점으로 활용
+                            </li>
+                            <li class="flex gap-2">
+                                <i class="fa-solid fa-chevron-right text-sky-400 mt-1 flex-shrink-0 text-xs"></i>
+                                자금 집행은 <strong class="text-slate-900 dark:text-white">6/15 전후</strong> 대형 IPO 유동성 소화 과정 모니터링 후, <strong class="text-slate-900 dark:text-white">3회 이상 분할 매수</strong>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Monitoring -->
+                    <div class="bg-white dark:bg-gray-800/50 rounded-2xl border border-slate-200 dark:border-gray-700 p-6 feature-card light-card-hover dark-card-hover">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-radar text-violet-500"></i>
+                            <span class="font-bold text-slate-900 dark:text-white">핵심 모니터링 지표</span>
+                        </div>
+                        <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                            <li class="flex gap-2">
+                                <i class="fa-solid fa-signal text-violet-400 mt-1 flex-shrink-0 text-xs"></i>
+                                <div><strong class="text-slate-900 dark:text-white">마켓 브레드스</strong> &mdash; 소수 기술주 상승세 둔화 시 순환매 vs 전체 하락 여부</div>
+                            </li>
+                            <li class="flex gap-2">
+                                <i class="fa-solid fa-landmark text-violet-400 mt-1 flex-shrink-0 text-xs"></i>
+                                <div><strong class="text-slate-900 dark:text-white">빅테크 자본조달 동향</strong> &mdash; 주식/채권 발행 등 자본 조달 압박이 시장 심리를 훼손하는 임계점 추적</div>
+                            </li>
+                            <li class="flex gap-2">
+                                <i class="fa-solid fa-cube text-violet-400 mt-1 flex-shrink-0 text-xs"></i>
+                                <div><strong class="text-slate-900 dark:text-white">구리 가격 지지력</strong> &mdash; AI 인프라 확장의 물리적 한계를 반영하는 안정적 상승 추세 유지 여부 확인</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Disclaimer -->
+            <section class="reveal">
+                <div class="bg-slate-100 dark:bg-gray-800/30 rounded-2xl border border-slate-200 dark:border-gray-700/50 p-5 text-center">
+                    <p class="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+                        <i class="fa-solid fa-circle-info mr-1"></i>
+                        본 리포트는 유튜브 영상 분석을 기반으로 AI가 정리한 정보이며, 투자 권유가 아닙니다. 모든 투자 판단과 책임은 투자자 본인에게 있습니다.
+                        <br>원본 영상: <a href="https://youtu.be/oqSSFBnSysQ?si=EXqEFUt36XIwn-sl" target="_blank" class="text-sky-500 hover:underline">올랜도 킴 미국주식</a> &middot; AI 분석: Gemini 3.1 Pro
+                    </p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+    
+    <!-- Footer Section -->
+    <footer class="border-t border-slate-200 dark:border-gray-800 py-10 mt-auto bg-white dark:bg-gray-900/50">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm font-medium">
+                <i class="fa-solid fa-bolt text-xl"></i>
+                <span>&copy; 2026 Invest Insight. Open source project.</span>
+            </div>
+            <div class="text-slate-400 dark:text-slate-500 text-xs">
+                Generated by AI Coding Assistant
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Scroll reveal animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        setTimeout(reveal, 100);
+    </script>
+</body>
+</html>
