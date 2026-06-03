@@ -119,10 +119,9 @@ Usage of agy:
 agy -p "한국 주식시장 오늘 주요 뉴스를 알려줘"
 
 # 타임아웃 + 권한 자동 승인 (자동화 용도)
-agy -p \
-    --dangerously-skip-permissions \
+agy --dangerously-skip-permissions \
     --print-timeout 15m0s \
-    "프롬프트 내용"
+    -p "프롬프트 내용"
 ```
 
 ### 3.3 자동화에서 필수 플래그
@@ -262,10 +261,9 @@ echo "=========================================="
 
 # ── Step 3: agy 실행 ──
 echo "🤖 agy 실행 중... (타임아웃: 15분)"
-agy -p \
-    --dangerously-skip-permissions \
+agy --dangerously-skip-permissions \
     --print-timeout 15m0s \
-    "$(cat <<PROMPT
+    -p "$(cat <<PROMPT
 오늘은 ${TODAY}이야. 한국과 미국 주식시장의 투자 인사이트 일일 리포트를 작성해줘.
 
 ## 수집 단계 (Deep Research)
