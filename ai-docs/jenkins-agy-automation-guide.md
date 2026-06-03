@@ -225,7 +225,9 @@ TZ=Asia/Seoul
 
 ```bash
 #!/bin/bash
-set -e
+set -ex # -e: 에러 발생 시 즉시 종료, -x: 에러 디버깅을 위해 실행되는 모든 명령어 로그 출력
+
+export PATH="/home/ubuntu/.local/bin:$PATH"
 
 # ── 환경 설정 ──
 REPO_URL="git@github.com:royalahn/invest.git"
@@ -392,7 +394,7 @@ bash: agy: command not found
 which agy
 
 # Jenkins Shell 스크립트 상단에 PATH 추가
-export PATH="/usr/local/bin:$PATH"
+export PATH="/home/ubuntu/.local/bin:$PATH"
 ```
 
 ### API Key 인증 실패
