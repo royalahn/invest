@@ -20,3 +20,6 @@ out*.txt
 err*.txt
 empty_test.txt
 test_agy.sh
+
+# Antigravity CLI
+.antigravitycli/
