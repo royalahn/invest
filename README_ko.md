@@ -11,8 +11,11 @@
 ```
 invest/
 ├── index.html                  # 랜딩 페이지 (문서 카탈로그 허브)
-├── pages.json                  # 문서 레지스트리 (모든 리포트의 메타데이터)
-├── ai-html/                    # 투자 인사이트 HTML 문서 폴더
+├── pages.json                  # 인사이트 문서 레지스트리
+├── daily.json                  # 일일 리포트 레지스트리
+├── ai-html/                    # 수동 작성 투자 인사이트 문서
+├── daily/                      # 자동 생성 일일 시장 리포트
+├── ai-docs/                    # 프로젝트 & 자동화 문서
 ├── template/
 │   ├── base_template.html      # 새 문서 작성용 기본 템플릿
 │   └── html_design_guide.md    # 디자인 시스템 레퍼런스

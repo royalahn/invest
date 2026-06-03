@@ -11,8 +11,11 @@ A curated collection of investment insight reports hosted via GitHub Pages. Each
 ```
 invest/
 ├── index.html                  # Landing page (document catalog hub)
-├── pages.json                  # Document registry (metadata for all reports)
-├── ai-html/                    # Investment insight HTML documents
+├── pages.json                  # Insight document registry
+├── daily.json                  # Daily report registry
+├── ai-html/                    # Manual investment insight documents
+├── daily/                      # Automated daily market reports
+├── ai-docs/                    # Project & automation documentation
 ├── template/
 │   ├── base_template.html      # Base template for new documents
 │   └── html_design_guide.md    # Design system reference

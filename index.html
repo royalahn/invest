@@ -149,27 +149,53 @@
             </div>
         </section>
 
-        <!-- Category Filter -->
-        <section class="mb-8 reveal active">
-            <div class="flex flex-wrap gap-2 justify-center" id="category-filters">
-                <button class="category-filter active px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:border-sky-400 dark:hover:border-sky-500" data-category="all">
-                    <i class="fa-solid fa-layer-group mr-1"></i> 전체
+        <!-- ============================== -->
+        <!-- Section 1: 일일 리포트 (daily.json) -->
+        <!-- ============================== -->
+        <section class="mb-16" id="daily-section">
+            <div class="flex items-center gap-3 mb-8 reveal active">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-lg">
+                    <i class="fa-solid fa-newspaper text-lg"></i>
+                </div>
+                <h2 class="text-2xl font-bold">일일 시장 리포트</h2>
+                <div class="flex-grow h-px bg-gray-200 dark:bg-gray-800 ml-4"></div>
+                <span id="daily-count" class="text-sm font-medium text-gray-500 dark:text-gray-400">0개의 리포트</span>
+            </div>
+
+            <div id="daily-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Daily report cards will be injected here -->
+            </div>
+
+            <!-- Show More Button -->
+            <div id="daily-show-more-wrapper" class="hidden mt-6 text-center">
+                <button id="daily-show-more" class="px-6 py-3 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:border-sky-400 dark:hover:border-sky-500 hover:text-sky-500 transition-all shadow-sm">
+                    <i class="fa-solid fa-chevron-down mr-2"></i>이전 리포트 더보기
                 </button>
             </div>
         </section>
 
-        <!-- Dynamic Catalog Grid -->
-        <section>
+        <!-- ============================== -->
+        <!-- Section 2: 인사이트 문서 (pages.json) -->
+        <!-- ============================== -->
+        <section id="insights-section">
+            <!-- Category Filter -->
+            <div class="flex flex-wrap gap-2 justify-center mb-8 reveal active" id="category-filters">
+                <button class="category-filter active px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:border-sky-400 dark:hover:border-sky-500" data-category="all">
+                    <i class="fa-solid fa-layer-group mr-1"></i> 전체
+                </button>
+            </div>
+
             <div class="flex items-center gap-3 mb-8 reveal active">
-                <i class="fa-solid fa-folder-open text-sky-500 text-xl"></i>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg">
+                    <i class="fa-solid fa-lightbulb text-lg"></i>
+                </div>
                 <h2 class="text-2xl font-bold">인사이트 문서</h2>
                 <div class="flex-grow h-px bg-gray-200 dark:bg-gray-800 ml-4"></div>
                 <span id="doc-count" class="text-sm font-medium text-gray-500 dark:text-gray-400">0개의 문서</span>
             </div>
 
-            <!-- This container will be populated by pages.json -->
             <div id="pages-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Cards will be injected here -->
+                <!-- Insight cards will be injected here -->
             </div>
         </section>
     </main>
@@ -216,26 +242,18 @@
 
             // IntersectionObserver for reveal animations
             const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
-            const observer = new IntersectionObserver((entries, observer) => {
+            const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
+                        obs.unobserve(entry.target);
                     }
                 });
             }, observerOptions);
 
             document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-            // Data logic
-            let allPages = [];
-            let currentCategory = 'all';
-            const container = document.getElementById('pages-container');
-            const searchInput = document.getElementById('search-input');
-            const docCount = document.getElementById('doc-count');
-            const categoryFiltersContainer = document.getElementById('category-filters');
-
-            // Category icon mapping
+            // ── Shared Config ──
             const categoryIcons = {
                 '종목분석': 'fa-solid fa-magnifying-glass-chart',
                 '시장동향': 'fa-solid fa-chart-line',
@@ -247,7 +265,6 @@
                 '가이드': 'fa-solid fa-book',
             };
 
-            // Category badge colors
             const categoryColors = {
                 '종목분석': 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
                 '시장동향': 'bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400',
@@ -259,12 +276,107 @@
                 '가이드': 'bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300',
             };
 
+            const searchInput = document.getElementById('search-input');
+
+            // ══════════════════════════════════════
+            // Section 1: Daily Reports (daily.json)
+            // ══════════════════════════════════════
+            let allDaily = [];
+            let dailyExpanded = false;
+            const DAILY_INITIAL_COUNT = 6;
+            const dailyContainer = document.getElementById('daily-container');
+            const dailyCount = document.getElementById('daily-count');
+            const dailySection = document.getElementById('daily-section');
+            const dailyShowMoreWrapper = document.getElementById('daily-show-more-wrapper');
+            const dailyShowMoreBtn = document.getElementById('daily-show-more');
+
+            function getFilteredDaily() {
+                const term = searchInput.value.toLowerCase();
+                if (!term) return allDaily;
+                return allDaily.filter(p =>
+                    p.title.toLowerCase().includes(term) ||
+                    p.description.toLowerCase().includes(term)
+                );
+            }
+
+            function renderDaily(reports) {
+                dailyContainer.innerHTML = '';
+                const visibleReports = dailyExpanded ? reports : reports.slice(0, DAILY_INITIAL_COUNT);
+                dailyCount.textContent = `${reports.length}개의 리포트`;
+
+                if (allDaily.length === 0) {
+                    dailySection.classList.add('hidden');
+                    return;
+                }
+                dailySection.classList.remove('hidden');
+
+                if (reports.length === 0) {
+                    dailyContainer.innerHTML = `
+                        <div class="col-span-full py-12 text-center bg-gray-100 dark:bg-gray-800/50 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700">
+                            <i class="fa-solid fa-magnifying-glass text-3xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400">검색 결과가 없습니다.</p>
+                        </div>
+                    `;
+                    dailyShowMoreWrapper.classList.add('hidden');
+                    return;
+                }
+
+                visibleReports.forEach((page, index) => {
+                    const card = document.createElement('a');
+                    card.href = page.filename;
+                    card.className = 'group block p-5 bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:translate-y-[-3px] border border-gray-100 dark:border-gray-700 reveal';
+                    card.style.transitionDelay = `${index * 40}ms`;
+
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-50 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center text-amber-500 dark:text-amber-400 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-newspaper text-sm"></i>
+                                </div>
+                                <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">Daily</span>
+                            </div>
+                            <div class="text-xs font-medium text-gray-400 dark:text-gray-500 flex items-center gap-1.5">
+                                <i class="fa-regular fa-calendar"></i> ${page.date}
+                            </div>
+                        </div>
+                        <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1.5 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors truncate">${page.title}</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 leading-relaxed">${page.description}</p>
+                    `;
+                    dailyContainer.appendChild(card);
+                    observer.observe(card);
+                });
+
+                // Show more button
+                if (reports.length > DAILY_INITIAL_COUNT) {
+                    dailyShowMoreWrapper.classList.remove('hidden');
+                    dailyShowMoreBtn.innerHTML = dailyExpanded
+                        ? '<i class="fa-solid fa-chevron-up mr-2"></i>접기'
+                        : `<i class="fa-solid fa-chevron-down mr-2"></i>이전 리포트 더보기 (${reports.length - DAILY_INITIAL_COUNT}개)`;
+                } else {
+                    dailyShowMoreWrapper.classList.add('hidden');
+                }
+            }
+
+            dailyShowMoreBtn.addEventListener('click', () => {
+                dailyExpanded = !dailyExpanded;
+                renderDaily(getFilteredDaily());
+            });
+
+            // ══════════════════════════════════════
+            // Section 2: Insight Pages (pages.json)
+            // ══════════════════════════════════════
+            let allPages = [];
+            let currentCategory = 'all';
+            const container = document.getElementById('pages-container');
+            const docCount = document.getElementById('doc-count');
+            const categoryFiltersContainer = document.getElementById('category-filters');
+
             function getFilteredPages() {
                 const term = searchInput.value.toLowerCase();
                 return allPages.filter(p => {
                     const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
-                    const matchesSearch = !term || 
-                        p.title.toLowerCase().includes(term) || 
+                    const matchesSearch = !term ||
+                        p.title.toLowerCase().includes(term) ||
                         p.description.toLowerCase().includes(term) ||
                         (p.category && p.category.toLowerCase().includes(term));
                     return matchesCategory && matchesSearch;
@@ -279,7 +391,7 @@
                     container.innerHTML = `
                         <div class="col-span-full py-20 text-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-800/30 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700 reveal active">
                             <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-tr from-sky-100 to-indigo-100 dark:from-sky-900/30 dark:to-indigo-900/30 flex items-center justify-center">
-                                <i class="fa-solid fa-chart-line text-3xl text-sky-500 dark:text-sky-400"></i>
+                                <i class="fa-solid fa-lightbulb text-3xl text-sky-500 dark:text-sky-400"></i>
                             </div>
                             <h3 class="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">아직 등록된 인사이트가 없습니다</h3>
                             <p class="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto leading-relaxed">
@@ -310,12 +422,12 @@
                     const badgeColor = categoryColors[page.category] || 'bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300';
                     const icon = categoryIcons[page.category] || 'fa-solid fa-file-lines';
 
-                    const categoryBadge = page.category 
+                    const categoryBadge = page.category
                         ? `<span class="px-3 py-1 text-xs font-semibold rounded-full ${badgeColor}">${page.category}</span>`
                         : '';
 
-                    const dateInfo = page.date 
-                        ? `<div class="text-xs font-medium text-gray-400 dark:text-gray-500 flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i> ${page.date}</div>` 
+                    const dateInfo = page.date
+                        ? `<div class="text-xs font-medium text-gray-400 dark:text-gray-500 flex items-center gap-1.5"><i class="fa-regular fa-calendar"></i> ${page.date}</div>`
                         : '';
 
                     card.innerHTML = `
@@ -341,11 +453,8 @@
 
             function buildCategoryFilters() {
                 const categories = [...new Set(allPages.map(p => p.category).filter(Boolean))];
-                
-                // Clear existing filters except "전체"
                 categoryFiltersContainer.innerHTML = '';
-                
-                // Add "전체" button
+
                 const allBtn = document.createElement('button');
                 allBtn.className = 'category-filter active px-4 py-2 rounded-full text-sm font-semibold border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:border-sky-400 dark:hover:border-sky-500';
                 allBtn.dataset.category = 'all';
@@ -361,7 +470,6 @@
                     categoryFiltersContainer.appendChild(btn);
                 });
 
-                // Add click handlers
                 categoryFiltersContainer.querySelectorAll('.category-filter').forEach(btn => {
                     btn.addEventListener('click', () => {
                         categoryFiltersContainer.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
@@ -372,27 +480,44 @@
                 });
             }
 
-            try {
-                const response = await fetch('pages.json?t=' + new Date().getTime());
-                allPages = await response.json();
+            // ── Fetch Data ──
+            const timestamp = new Date().getTime();
+
+            // Fetch both JSON files in parallel
+            const [pagesRes, dailyRes] = await Promise.allSettled([
+                fetch('pages.json?t=' + timestamp).then(r => r.json()),
+                fetch('daily.json?t=' + timestamp).then(r => r.json()),
+            ]);
+
+            // Process pages.json (insights)
+            if (pagesRes.status === 'fulfilled') {
+                allPages = pagesRes.value;
                 buildCategoryFilters();
                 renderPages(allPages);
-
-                // Search Event
-                searchInput.addEventListener('input', () => {
-                    renderPages(getFilteredPages());
-                });
-
-            } catch (error) {
-                console.error('Failed to load pages catalog:', error);
+            } else {
+                console.error('Failed to load pages.json:', pagesRes.reason);
                 container.innerHTML = `
                     <div class="col-span-full p-8 text-center bg-red-50 dark:bg-red-900/20 text-red-500 rounded-3xl border border-red-100 dark:border-red-800">
                         <i class="fa-solid fa-circle-exclamation text-3xl mb-3"></i>
-                        <p class="font-medium">문서 목록을 불러오지 못했습니다.</p>
-                        <p class="text-sm mt-1 opacity-80">pages.json 파일이 존재하고 유효한 형식인지, 로컬 웹 서버로 접속했는지 확인해주세요.</p>
+                        <p class="font-medium">인사이트 문서 목록을 불러오지 못했습니다.</p>
                     </div>
                 `;
             }
+
+            // Process daily.json (daily reports) — sorted by date descending
+            if (dailyRes.status === 'fulfilled') {
+                allDaily = dailyRes.value.sort((a, b) => b.date.localeCompare(a.date));
+                renderDaily(allDaily);
+            } else {
+                console.error('Failed to load daily.json:', dailyRes.reason);
+                dailySection.classList.add('hidden');
+            }
+
+            // Search applies to both sections
+            searchInput.addEventListener('input', () => {
+                renderDaily(getFilteredDaily());
+                renderPages(getFilteredPages());
+            });
         });
     </script>
 </body>
