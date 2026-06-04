@@ -142,10 +142,19 @@
                 종목 분석, 시장 동향, 투자 전략까지 — AI를 활용하여 작성된 투자 인사이트 리포트를 한 곳에서 편리하게 탐색해 보세요.
             </p>
             
-            <!-- Search Bar -->
-            <div class="max-w-xl mx-auto relative group">
-                <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-sky-500 transition-colors"></i>
-                <input type="text" id="search-input" placeholder="종목명, 키워드로 검색..." class="w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all text-gray-900 dark:text-white placeholder-gray-400">
+            <!-- Search & Sort -->
+            <div class="max-w-2xl mx-auto flex flex-col sm:flex-row gap-3">
+                <div class="relative group flex-grow">
+                    <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-sky-500 transition-colors"></i>
+                    <input type="text" id="search-input" placeholder="종목명, 키워드로 검색..." class="w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all text-gray-900 dark:text-white placeholder-gray-400">
+                </div>
+                <div class="relative shrink-0">
+                    <select id="sort-select" class="h-full w-full sm:w-36 px-4 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all text-gray-900 dark:text-white appearance-none cursor-pointer text-sm font-medium">
+                        <option value="desc">최신순</option>
+                        <option value="asc">과거순</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none text-sm"></i>
+                </div>
             </div>
         </section>
 
@@ -277,6 +286,31 @@
             };
 
             const searchInput = document.getElementById('search-input');
+            const sortSelect = document.getElementById('sort-select');
+            let currentSort = 'desc';
+
+            function sortItems(items) {
+                return items.sort((a, b) => {
+                    const dateA = a.date || "";
+                    const dateB = b.date || "";
+                    const fileA = a.filename || "";
+                    const fileB = b.filename || "";
+                    
+                    if (currentSort === 'desc') {
+                        return dateB.localeCompare(dateA) || fileB.localeCompare(fileA);
+                    } else {
+                        return dateA.localeCompare(dateB) || fileA.localeCompare(fileB);
+                    }
+                });
+            }
+
+            sortSelect.addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                allDaily = sortItems(allDaily);
+                allPages = sortItems(allPages);
+                renderDaily(getFilteredDaily());
+                renderPages(getFilteredPages());
+            });
 
             // ══════════════════════════════════════
             // Section 1: Daily Reports (daily.json)
@@ -491,7 +525,7 @@
 
             // Process pages.json (insights)
             if (pagesRes.status === 'fulfilled') {
-                allPages = pagesRes.value.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.filename || "").localeCompare(a.filename || ""));
+                allPages = sortItems(pagesRes.value);
                 buildCategoryFilters();
                 renderPages(allPages);
             } else {
@@ -504,9 +538,9 @@
                 `;
             }
 
-            // Process daily.json (daily reports) — sorted by date descending
+            // Process daily.json (daily reports)
             if (dailyRes.status === 'fulfilled') {
-                allDaily = dailyRes.value.sort((a, b) => b.date.localeCompare(a.date) || b.filename.localeCompare(a.filename));
+                allDaily = sortItems(dailyRes.value);
                 renderDaily(allDaily);
             } else {
                 console.error('Failed to load daily.json:', dailyRes.reason);
