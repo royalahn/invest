@@ -491,7 +491,7 @@
 
             // Process pages.json (insights)
             if (pagesRes.status === 'fulfilled') {
-                allPages = pagesRes.value;
+                allPages = pagesRes.value.sort((a, b) => (b.date || "").localeCompare(a.date || "") || (b.filename || "").localeCompare(a.filename || ""));
                 buildCategoryFilters();
                 renderPages(allPages);
             } else {
