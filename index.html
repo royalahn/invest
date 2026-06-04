@@ -506,7 +506,7 @@
 
             // Process daily.json (daily reports) — sorted by date descending
             if (dailyRes.status === 'fulfilled') {
-                allDaily = dailyRes.value.sort((a, b) => b.date.localeCompare(a.date));
+                allDaily = dailyRes.value.sort((a, b) => b.date.localeCompare(a.date) || b.filename.localeCompare(a.filename));
                 renderDaily(allDaily);
             } else {
                 console.error('Failed to load daily.json:', dailyRes.reason);
