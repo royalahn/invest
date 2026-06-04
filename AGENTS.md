@@ -47,3 +47,20 @@ This file contains project-specific guidelines for AI coding assistants.
 ## 4. Automation & Daily Reports
 - 이 프로젝트는 **Jenkins 스케줄러**와 **agy (Antigravity CLI) non-interactive 모드(`-p`)**를 활용하여 매일 투자 인사이트 문서를 자동 생성하고 commit & push 하는 파이프라인을 지원합니다.
 - 해당 파이프라인의 전체 작동 방식과 프롬프트 구조, 스크립트는 **[`ai-docs/jenkins-agy-automation-guide.md`](ai-docs/jenkins-agy-automation-guide.md)** 파일에 자세히 문서화되어 있습니다. AI가 해당 시스템을 유지보수하거나 디버깅해야 할 경우, 반드시 이 가이드를 먼저 참고하십시오.
+
+## 5. Git Commit Convention
+이 프로젝트는 [Conventional Commits v1.0.0](https://www.conventionalcommits.org/ko/v1.0.0/) 규격을 따릅니다.
+AI 어시스턴트는 코드 변경 후 commit 할 때 반드시 아래의 타입(Prefix) 중 하나를 선택하여 커밋 메시지를 작성해야 합니다.
+
+- `feat:` 새로운 기능 추가
+- `fix:` 버그 수정
+- `docs:` 문서 수정 (HTML, Markdown 등)
+- `style:` 코드 포맷팅, 세미콜론 누락 등 (실제 코드 변경 없음)
+- `refactor:` 코드 리팩토링 (버그 수정이나 기능 추가가 없는 코드 변경)
+- `test:` 테스트 코드, 리팩토링 테스트 코드 추가
+- `chore:` 빌드 업무 수정, 패키지 매니저 수정 (`.gitignore`, 환경설정 등)
+- `perf:` 성능 개선을 위한 코드 수정
+- `ci:` CI/CD 설정 파일 및 스크립트 수정
+- `build:` 빌드 시스템이나 외부 종속성 관련 변경
+
+**작성 예시:** `feat: 날짜 오름차순/내림차순 정렬 옵션 추가`
