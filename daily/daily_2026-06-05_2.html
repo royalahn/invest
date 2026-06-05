@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일일 투자 인사이트 (2026-06-05) - Invest Insight</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                        mono: ['"Cascadia Mono"', 'Pretendard', 'monospace'],
+                    },
+                    colors: {
+                        gray: {
+                            900: '#0f1115',
+                            800: '#161b22',
+                            700: '#21262d',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            updateThemeIcon();
+        }
+        
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            if (sunIcon && moonIcon) {
+                sunIcon.style.display = isDark ? 'block' : 'none';
+                moonIcon.style.display = isDark ? 'none' : 'block';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        html, body { overflow-x: hidden; }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            word-break: keep-all;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-header {
+            background: rgba(15, 17, 21, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #0ea5e9, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
+        }
+        .dark .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+        .feature-card { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .feature-card:hover { transform: translateY(-5px); }
+        .light-card-hover:hover {
+            box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1), 0 10px 10px -5px rgba(14, 165, 233, 0.04);
+            border-color: #7dd3fc;
+        }
+        .dark .dark-card-hover:hover {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.1);
+            border-color: #38bdf8;
+        }
+        .glow-bg {
+            position: absolute;
+            width: 100%;
+            max-width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        .dark .glow-bg { background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(15, 17, 21, 0) 70%); }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-[#0f1115] text-slate-900 dark:text-e2e8f0 min-h-screen flex flex-col selection:bg-sky-200 selection:text-sky-900 dark:selection:bg-sky-500/30 dark:selection:text-sky-200">
+
+    <div class="glow-bg"></div>
+
+    <header class="glass-header sticky top-0 z-50 py-4 px-6 sm:px-12 lg:px-24">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    Invest <span class="gradient-text">Insight</span>
+                </h1>
+            </div>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-8 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                    <li><a href="../index.html" class="hover:text-sky-500 transition-colors">홈</a></li>
+                    <li><a href="#" class="hover:text-sky-500 transition-colors">시장동향</a></li>
+                </ul>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleTheme()" class="p-2 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle Theme">
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moon-icon" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <a href="https://github.com/royalahn/invest" target="_blank" class="hidden sm:flex px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-medium text-sm transition-all border border-transparent dark:border-white/10 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow pb-24 px-6 sm:px-12 lg:px-24 pt-12">
+        <div class="max-w-7xl mx-auto space-y-16">
+            
+            <div class="text-center py-10 reveal active">
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6">
+                    일일 투자 인사이트 <span class="gradient-text">2026-06-05</span>
+                </h2>
+                <p class="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+                    브로드컴 쇼크와 외국인 대규모 매도세로 인한 한국 증시 급락 및 미국 시장 섹터 순환매 동향 심층 분석
+                </p>
+            </div>
+
+            <!-- 1. 한눈에 보기 -->
+            <section class="reveal">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 border-l-4 border-sky-500 pl-4">1. 한눈에 보기</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="feature-card light-card-hover dark-card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 border border-slate-200 dark:border-gray-700">
+                        <div class="text-sky-500 mb-4"><i class="fa-solid fa-chart-line text-3xl"></i></div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">한국 증시 폭락</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">코스피 8,160선 (-5.54%) 추락. 장중 사이드카 발동 및 외국인 3.5조 원 대규모 순매도.</p>
+                    </div>
+                    <div class="feature-card light-card-hover dark-card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 border border-slate-200 dark:border-gray-700">
+                        <div class="text-indigo-500 mb-4"><i class="fa-solid fa-globe text-3xl"></i></div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">미국 시장 혼조세</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">브로드컴 발 AI 반도체 투자심리 악화. 나스닥 하락(-0.09%) 반면 다우 급등(+1.73%)으로 순환매 양상.</p>
+                    </div>
+                    <div class="feature-card light-card-hover dark-card-hover bg-white dark:bg-gray-800 rounded-2xl p-6 border border-slate-200 dark:border-gray-700">
+                        <div class="text-purple-500 mb-4"><i class="fa-solid fa-coins text-3xl"></i></div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">고환율 비상</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">원/달러 환율 장중 1,549원 터치, 종가 1,539.1원 마감. 2009년 금융위기 이후 최고 수준 도달.</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-100 dark:bg-gray-800/50 text-slate-600 dark:text-slate-400">
+                            <tr>
+                                <th class="p-4 font-semibold">지수/지표</th>
+                                <th class="p-4 font-semibold">종가</th>
+                                <th class="p-4 font-semibold">등락/변동</th>
+                                <th class="p-4 font-semibold">비고</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                            <tr>
+                                <td class="p-4 font-medium text-slate-900 dark:text-slate-200">KOSPI</td>
+                                <td class="p-4 text-slate-700 dark:text-slate-300">8,160.59</td>
+                                <td class="p-4 text-red-500 font-medium">-478.82 (-5.54%)</td>
+                                <td class="p-4 text-slate-500">외국인 3.5조원 순매도</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-slate-900 dark:text-slate-200">KOSDAQ</td>
+                                <td class="p-4 text-slate-700 dark:text-slate-300">1,002.44</td>
+                                <td class="p-4 text-red-500 font-medium">-47.29 (-4.50%)</td>
+                                <td class="p-4 text-slate-500">장중 1,000선 붕괴</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-slate-900 dark:text-slate-200">S&P 500</td>
+                                <td class="p-4 text-slate-700 dark:text-slate-300">7,584.31</td>
+                                <td class="p-4 text-blue-500 font-medium">+30.93 (+0.41%)</td>
+                                <td class="p-4 text-slate-500">전일 현지시간 마감 기준</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-slate-900 dark:text-slate-200">NASDAQ</td>
+                                <td class="p-4 text-slate-700 dark:text-slate-300">약세 마감</td>
+                                <td class="p-4 text-red-500 font-medium">-0.09%</td>
+                                <td class="p-4 text-slate-500">기술주 하락 주도</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-medium text-slate-900 dark:text-slate-200">원/달러 환율</td>
+                                <td class="p-4 text-slate-700 dark:text-slate-300">1,539.1원</td>
+                                <td class="p-4 text-blue-500 font-medium">+9.4원</td>
+                                <td class="p-4 text-slate-500">장중 최고 1,549원</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 2. 🇰🇷 한국 시장 심층 분석 -->
+            <section class="reveal">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 border-l-4 border-indigo-500 pl-4">2. 🇰🇷 한국 시장 심층 분석</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-gray-700 shadow-sm space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-[15px]">
+                    <p>
+                        2026년 6월 5일 국내 증시는 이른바 <strong>'브로드컴 쇼크'</strong>의 여파로 인해 투자심리가 극도로 얼어붙으며 급락장으로 마감했습니다. <strong>코스피는 전 거래일 대비 478.82포인트(5.54%) 폭락한 8,160.59</strong>에 거래를 마쳤으며, <strong>코스닥 지수 역시 47.29포인트(4.50%) 하락한 1,002.44</strong>를 기록했습니다. 코스피 시장에서는 장 초반부터 투매 물량이 쏟아지며 프로그램 매도호가 효력이 일시 정지되는 매도 사이드카가 발동되었으며, 장중 한때 심리적 지지선인 8,000선마저 위협받는 극단적인 공포 심리가 표출되었습니다.
+                    </p>
+                    <p>
+                        수급 측면에서 낙폭을 키운 주체는 단연 외국인이었습니다. <strong>외국인은 코스피에서만 무려 3조 5,391억 원을 순매도</strong>하며 20거래일 연속 매도 우위라는 거친 '팔자' 행진을 이어갔습니다. 기관 역시 9,398억 원을 순매도하며 지수 하락에 일조했습니다. 개인 투자자들이 홀로 4조 2,211억 원을 순매수하며 저가 매수에 나섰지만, 외국인과 기관의 압도적인 매물 폭탄을 막아내기에는 역부족이었습니다. 이러한 대규모 자본 이탈은 글로벌 AI 랠리에 대한 단기 고점 인식과 원/달러 환율 급등에 따른 환차손 우려가 복합적으로 작용한 결과로 해석됩니다.
+                    </p>
+                    <p>
+                        업종 및 종목별로 살펴보면, 간밤 뉴욕 증시에서 브로드컴이 시장 기대치에 미달하는 AI 반도체 매출 가이던스를 발표한 것이 결정타로 작용했습니다. 이로 인해 한국 반도체 대장주들이 직격탄을 맞았습니다. <strong>삼성전자는 -6.40% 급락</strong>했으며, <strong>SK하이닉스는 -9.92%</strong>로 두 자릿수에 가까운 낙폭을 기록했습니다. 반도체뿐만 아니라 <strong>삼성물산(-13.93%)</strong>을 비롯한 주요 대형주들 역시 차익실현 매물과 패닉 셀링의 대상이 되었습니다. 시장은 그간 증시를 견인해 온 'AI 인프라 테마'의 수익성에 대한 첫 검증 무대에서 실망감을 표출하며, 방어주 위주로 자금을 급격히 피신시키는 모습을 보였습니다.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 3. 🇺🇸 미국 시장 심층 분석 -->
+            <section class="reveal">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 border-l-4 border-blue-500 pl-4">3. 🇺🇸 미국 시장 심층 분석</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-gray-700 shadow-sm space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-[15px]">
+                    <p>
+                        전일(6월 4일 현지시간) 미국 증시는 극명한 섹터별 차별화 흐름을 보이며 혼조세로 마감했습니다. <strong>나스닥 지수는 -0.09% 약보합세</strong>를 보인 반면, <strong>S&P 500 지수는 +0.41% 상승한 7,584.31</strong>, <strong>다우존스 산업평균지수는 +1.73% 급등한 51,561.12</strong>로 마감했습니다. 이러한 양극화된 지수 흐름은 AI 관련 기술주에 쏠렸던 자금이 금융, 헬스케어 등 가치주 및 경기 방어주로 대거 이동하는 전형적인 '순환매(Rotation)' 양상을 대변하고 있습니다.
+                    </p>
+                    <p>
+                        특히 이른바 '매그니피센트 7(M7)'으로 불리는 빅테크 기업들의 조정이 두드러졌습니다. 시장 하락의 촉매제가 된 <strong>브로드컴(AVGO)</strong>은 실적 발표 직후 기대에 못 미친 가이던스 탓에 주가가 급락했습니다. 이는 AI 인프라 구축에 소요되는 천문학적인 비용 대비 수익성에 대한 시장의 의구심을 자극했습니다. <strong>알파벳(GOOGL)</strong> 역시 대규모 AI 인프라 자금 조달 소식이 전해지며 단기적인 재무 부담 우려로 하락세를 면치 못했고, <strong>아마존(AMZN)</strong>과 <strong>마이크로소프트(MSFT)</strong> 등도 유사한 비용 부담 리스크로 일제히 약세를 보였습니다.
+                    </p>
+                    <p>
+                        그럼에도 다우와 S&P 500이 버텨준 배경에는 지정학적 리스크 완화에 대한 기대감과 금리 인하에 대한 불씨가 남아 있기 때문입니다. 중동 지역의 휴전 협상 진전 가능성이 제기되면서 에너지 및 운송주들의 변동성이 다소 진정되었고, 주말을 앞두고 대기 중인 미국 고용 보고서 결과를 관망하려는 심리가 블루칩으로의 안전 자산 선호 현상을 부추겼습니다. 시장 전문가들은 당분간 AI 성장주에 대한 '옥석 가리기'가 심화될 것으로 전망하고 있습니다.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 4. 🌍 매크로 & 글로벌 이슈 -->
+            <section class="reveal">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 border-l-4 border-green-500 pl-4">4. 🌍 매크로 & 글로벌 이슈</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-gray-700 shadow-sm space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-[15px]">
+                    <p>
+                        외환 시장은 패닉에 가까운 변동성을 보이고 있습니다. 6월 5일 서울 외환시장에서 <strong>원/달러 환율은 전 거래일보다 9.4원이나 급등한 1,539.1원에 종가</strong>를 형성했습니다. 장중 한때 1,549원 선을 돌파하며 <strong>2009년 글로벌 금융위기 이후 최고 수준</strong>을 경신하는 기염을 토했습니다. 이러한 환율 급등은 아시아 통화의 전반적인 약세와 맞물려, 외국인 투자자들의 대규모 국내 주식 매도 대금을 달러로 환전하려는 수요가 폭발적으로 증가한 데 기인합니다. 
+                    </p>
+                    <p>
+                        채권 시장 역시 환율 충격과 맞물려 금리가 뛰어올랐습니다. <strong>한국의 10년물 국채 금리는 4.26%</strong> 수준까지 상승했고, 3년물 국채 금리 역시 3.87% 대에서 움직였습니다. 글로벌 통화정책의 불확실성이 지속되는 가운데 국내 시장의 리스크 프리미엄이 급격히 상승하고 있으며, 이는 고스란히 시중 은행채 금리 인상으로 전이되어 가계 및 기업의 이자 상환 부담을 심화시키는 거시적 악순환의 뇌관이 되고 있습니다.
+                    </p>
+                    <p>
+                        한편 원자재 시장에서는 <strong>서부텍사스산 원유(WTI) 가격이 배럴당 92~93달러</strong> 밴드 내에서 공방을 벌였습니다. 중동발 지정학적 위기가 일촉즉발의 상황에서 잠시 소강상태로 접어들었다는 관측이 나오며 공급 차질에 대한 최악의 우려는 한풀 꺾였으나, 90달러를 상회하는 고유가 고착화는 수입 의존도가 절대적인 한국 경제에 지속적인 무역수지 악화 압력으로 작용하고 있습니다.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 5. 💡 투자 시사점 & 전략 -->
+            <section class="reveal">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 border-l-4 border-purple-500 pl-4">5. 💡 투자 시사점 & 전략</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-gray-700 shadow-sm space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-[15px]">
+                    <p>
+                        향후 1주일간 주식 시장은 극심한 '눈치 보기'와 변동성 장세가 이어질 전망입니다. 당장 확인해야 할 최대 변수는 미국의 주요 고용 지표 결과입니다. 이 지표에 따라 연준(Fed)의 하반기 금리 인하 경로가 다시 한번 재단될 것이며, 이는 1,540원 턱밑까지 치솟은 원/달러 환율의 방향성을 결정짓는 핵심 키가 될 것입니다. 환율이 1,550원 저항선을 상향 돌파할 경우 추가적인 외국인 이탈이 불가피하므로 환율 동향을 포트폴리오 비중 조절의 최우선 지표로 삼아야 합니다.
+                    </p>
+                    <p>
+                        전략적으로는 AI 랠리 주도주에 대한 무조건적인 낙관론을 경계할 시점입니다. '브로드컴 쇼크'가 증명하듯, 시장은 이제 장밋빛 미래가 아닌 실제 창출되는 '숫자(Cash Flow)'를 요구하기 시작했습니다. 삼성전자, SK하이닉스 등 낙폭 과대 반도체주에 대한 '묻지마 저가 매수'보다는 하반기 실적 가시성이 뚜렷한 기업 중심으로 선별적 접근이 필요합니다. 지수 변동성에 대비해 전체 포트폴리오의 현금 비중을 일정 수준 확대하는 보수적인 대응이 권장됩니다.
+                    </p>
+                    <p>
+                        기회 요인으로는 미국 증시에서 확인된 '순환매'의 국내 시장 전이 가능성입니다. 반도체, AI 등 고밸류에이션 성장주가 쉬어가는 구간에서 실적 턴어라운드가 기대되는 필수 소비재, 배당 수익률이 높아지는 금융주, 그리고 수출 경쟁력을 확보한 자동차 부품주 등 소외되었던 가치주 섹터로 단기 트레이딩 자금이 쏠릴 수 있습니다. 리스크 관리 차원에서 이러한 방어적 섹터에 일부 비중을 분산 편입하는 것이 계좌의 변동성을 낮추는 유효한 전략이 될 것입니다.
+                    </p>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer class="border-t border-slate-200 dark:border-gray-800 py-10 mt-auto bg-white dark:bg-gray-900/50">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm font-medium">
+                <i class="fa-solid fa-bolt text-xl"></i>
+                <span>&copy; 2026 Invest Insight. Open source project.</span>
+            </div>
+            <div class="text-slate-400 dark:text-slate-500 text-xs">
+                Generated by AI Coding Assistant
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        setTimeout(reveal, 100);
+    </script>
+</body>
+</html>
