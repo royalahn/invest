@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메모리 반도체, 지금 팔아야 할 때인가? - Invest Insight</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                        mono: ['"Cascadia Mono"', 'Pretendard', 'monospace'],
+                    },
+                    colors: {
+                        gray: {
+                            900: '#0f1115',
+                            800: '#161b22',
+                            700: '#21262d',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            updateThemeIcon();
+        }
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            if (sunIcon && moonIcon) {
+                sunIcon.style.display = isDark ? 'block' : 'none';
+                moonIcon.style.display = isDark ? 'none' : 'block';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        html, body { overflow-x: hidden; }
+        body { font-family: 'Pretendard', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; word-break: keep-all; }
+        .glass-header { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
+        .dark .glass-header { background: rgba(15, 17, 21, 0.7); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .gradient-text { background: linear-gradient(to right, #0ea5e9, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 4s linear infinite; }
+        .dark .gradient-text { background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; }
+        @keyframes shine { to { background-position: 200% center; } }
+        .feature-card { transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .feature-card:hover { transform: translateY(-5px); }
+        .light-card-hover:hover { box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1), 0 10px 10px -5px rgba(14, 165, 233, 0.04); border-color: #7dd3fc; }
+        .dark .dark-card-hover:hover { box-shadow: 0 0 25px rgba(56, 189, 248, 0.1); border-color: #38bdf8; }
+        .glow-bg { position: absolute; width: 100%; max-width: 800px; height: 800px; background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(255, 255, 255, 0) 70%); top: -300px; left: 50%; transform: translateX(-50%); z-index: -1; pointer-events: none; transition: all 0.5s ease; }
+        .dark .glow-bg { background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(15, 17, 21, 0) 70%); }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-[#0f1115] text-slate-900 dark:text-e2e8f0 min-h-screen flex flex-col selection:bg-sky-200 selection:text-sky-900 dark:selection:bg-sky-500/30 dark:selection:text-sky-200">
+    <div class="glow-bg"></div>
+    <header class="glass-header sticky top-0 z-50 py-4 px-6 sm:px-12 lg:px-24">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    Invest <span class="gradient-text">Insight</span>
+                </h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleTheme()" class="p-2 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle Theme">
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moon-icon" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <a href="../" class="hidden sm:flex px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-medium text-sm transition-all border border-transparent dark:border-white/10 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    목록으로
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow pb-24 px-6 sm:px-12 lg:px-24 pt-12">
+        <div class="max-w-4xl mx-auto space-y-12">
+            
+            <div class="text-center space-y-4 reveal active">
+                <span class="inline-block py-1 px-3 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 text-sm font-semibold tracking-wide">반도체 섹터 분석</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 leading-tight">
+                    메모리 반도체 주식,<br/> <span class="gradient-text">지금 팔아야 할 때인가?</span>
+                </h2>
+                <p class="text-lg text-slate-600 dark:text-slate-400">유튜브 인사이트 리포트 &mdash; 삼성전자와 SK하이닉스의 주가 전망 및 대응 전략</p>
+            </div>
+
+            <!-- 요약 카드 -->
+            <div class="reveal bg-white dark:bg-gray-800 rounded-2xl p-8 border border-slate-200 dark:border-gray-700 shadow-sm feature-card light-card-hover dark-card-hover">
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-yellow-500"></i> 핵심 3줄 요약
+                </h3>
+                <ul class="space-y-3 text-slate-700 dark:text-slate-300">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-sky-500 mt-1"></i>
+                        <span><strong>빅테크의 CAPEX 멈춤 우려:</strong> 이익 대비 현금 흐름 악화에도 구글은 유상증자까지 불사하며 AI 투자를 강행하고 있어 멈출 가능성은 희박합니다.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-sky-500 mt-1"></i>
+                        <span><strong>이익률 감소 우려:</strong> 레거시 메모리 수익성이 극대화되며 메모리사들의 벤더 협상력이 강해져, 이익이 더 폭발할 여지가 존재합니다.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-sky-500 mt-1"></i>
+                        <span><strong>장기 전망:</strong> 향후 AI가 Physical AI(물리적 AI)로 진화함에 따라 '기억(메모리)' 장치의 필요성이 급증하므로, 블랙스완만 없다면 장기 보유를 추천합니다.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 본문 섹션들 -->
+            <div class="space-y-8">
+                
+                <div class="reveal">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">1. 빅테크 기업들이 투자를 멈출 것인가?</h3>
+                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                        시장의 주요 우려 중 하나는 막대한 자본을 쏟아붓고 있는 <strong>빅테크 기업들이 더 이상 CAPEX(설비투자)를 진행하지 못할 때</strong> 메모리 주식이 타격을 받는다는 것입니다. 빅테크들의 이익은 좋지만, 대부분의 돈을 AI 투자에 재투자하고 있어 현금이 고갈되고 있습니다.<br/><br/>
+                        하지만 <strong>구글은 최근 800억 달러 규모의 자금 조달을 위해 자사주 매입 대신 '유상증자'</strong>를 감행했습니다. 유상증자까지 진행하며 투자를 이어나간다는 것은 빅테크들이 AI 인프라 구축을 포기하지 않을 것임을 강력하게 시사합니다.
+                    </p>
+                </div>
+
+                <div class="reveal">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">2. 삼성과 SK하이닉스, 이익 성장률 둔화될까?</h3>
+                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+                        2025년 대비 2026년 폭발적으로 상승한 이익에 비해 2027년 이익 성장폭은 낮을 것이라는 불안감이 있습니다. 하지만 현실은 다릅니다. 현재 HBM 제조 난이도 대비 범용 D램 및 낸드의 수익성이 훨씬 좋아지는 기현상이 발생하고 있습니다.
+                    </p>
+                    <div class="bg-slate-100 dark:bg-gray-900/80 rounded-xl p-6 border-l-4 border-indigo-500">
+                        <p class="text-sm italic text-slate-600 dark:text-slate-400">"HBM보다 레거시 제품(D램/낸드)을 만드는 것이 수익성이 더 높다면, SK하이닉스는 엔비디아에 더 강력한 협상력을 가지게 됩니다. 즉, 가격 인상을 요구할 수 있는 위치에 서게 되며, 실질 영업이익은 시장의 예측보다 훨씬 클 수 있습니다."</p>
+                    </div>
+                </div>
+
+                <div class="reveal">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">3. 우리가 주의해야 할 유일한 '블랙스완'</h3>
+                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                        메모리 반도체 주식은 <strong>'탄광 속의 카나리아'</strong>라고 불릴 만큼 가장 민감하고 선행하는 지표입니다. 만약 엔비디아의 블랙웰 개발이 지연되거나, 미중 갈등(대만 리스크)으로 공급망이 붕괴되거나, 혹은 기술 발전으로 메모리의 필요성이 현저히 줄어드는 등의 사태가 발생한다면 시장은 가장 먼저 주가를 통해 이를 경고할 것입니다. 
+                        <strong>뚜렷한 이유 없는 주가의 지속적인 급락</strong>은 이러한 숨겨진 블랙스완이 존재할 가능성을 내포하므로 주의 깊게 살펴야 합니다.
+                    </p>
+                </div>
+
+                <div class="reveal bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl p-8 border border-indigo-200 dark:border-indigo-900/50">
+                    <h3 class="text-xl font-bold text-indigo-900 dark:text-indigo-300 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-robot"></i> 장기 전망 : 에이전트 AI에서 Physical AI로
+                    </h3>
+                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                        과거의 물리적 컴퓨팅 시스템(가로등, 센서 등)은 기억 장치가 필요 없었습니다. 하지만 다가오는 <strong>Physical AI 시대</strong>에는 물리적 기기들(로봇, 자율주행 등)이 복잡한 연산과 자체 '기억'을 요구하게 됩니다.<br/><br/>
+                        메모리의 활용처가 단순히 데이터센터에 머물지 않고 물리적 AI 영역까지 확장된다면 메모리 시장의 파이는 우리의 상상을 초월할 수 있습니다. <strong>따라서 단기적인 변동성에 흔들리기보다는 장기적인 성장 가치에 투자해야 합니다.</strong>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    
+    <footer class="border-t border-slate-200 dark:border-gray-800 py-10 mt-auto bg-white dark:bg-gray-900/50">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm font-medium">
+                <i class="fa-solid fa-bolt text-xl"></i>
+                <span>&copy; 2026 Invest Insight. Open source project.</span>
+            </div>
+            <div class="text-slate-400 dark:text-slate-500 text-xs">
+                Generated by AI Coding Assistant
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        setTimeout(reveal, 100);
+    </script>
+</body>
+</html>
