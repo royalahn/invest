@@ -1,0 +1,176 @@
+import json
+import os
+import shutil
+
+workspace = "/home/ubuntu/Workspace/GitHub/invest"
+daily_dir = os.path.join(workspace, "daily")
+template_path = os.path.join(workspace, "template", "base_template.html")
+target_html = os.path.join(daily_dir, "daily_2026-06-30_2.html")
+daily_json = os.path.join(workspace, "daily.json")
+
+# 1. Update daily.json
+with open(daily_json, 'r', encoding='utf-8') as f:
+    data = json.load(f)
+
+new_entry = {
+    "title": "일일 투자 인사이트 — 2026-06-30 (2)",
+    "filename": "daily/daily_2026-06-30_2.html",
+    "description": "한국 증시 KOSPI 반등 및 외국인 3.8조 매도, 미국 M7 릴리프 랠리와 1,549원 초고환율 심층 분석",
+    "category": "시장동향",
+    "date": "2026-06-30"
+}
+data.insert(0, new_entry)
+
+with open(daily_json, 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+
+# 2. Create the HTML file
+html_content = """
+        <!-- 1. 한눈에 보기 -->
+        <section class="mb-12">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-6">
+                2026년 6월 30일 <span class="gradient-text">시장 동향</span>
+            </h2>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700 mb-8">
+                <h3 class="text-xl font-bold mb-4 text-slate-800 dark:text-slate-200">💡 핵심 요약</h3>
+                <ul class="list-disc pl-6 space-y-2 text-slate-600 dark:text-slate-400">
+                    <li>한국 코스피는 외국인의 역대급 매도(3.8조 원)에도 불구하고 기관의 저가 매수세와 반도체 반등에 힘입어 8,476.48(+0.97%)로 상승 마감했습니다.</li>
+                    <li>미국 증시는 지정학적 긴장 완화와 국채 금리 하락으로 나스닥이 25,820.14(+2.07%)로 급등하며 M7 기술주의 강력한 릴리프 랠리를 기록했습니다.</li>
+                    <li>환율은 1,549.4원으로 1998년 외환위기 이후 최고 수준을 지속 중이나, 국제 유가는 브렌트유 기준 73.49달러로 하락하며 인플레이션 우려를 덜어주었습니다.</li>
+                </ul>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- KOSPI -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-slate-200 dark:border-gray-700 feature-card">
+                    <div class="text-sm text-slate-500 dark:text-slate-400 mb-1">KOSPI</div>
+                    <div class="text-2xl font-bold text-red-500">8,476.48</div>
+                    <div class="text-sm font-semibold text-red-500 mt-1">▲ 81.83 (+0.97%)</div>
+                </div>
+                <!-- KOSDAQ -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-slate-200 dark:border-gray-700 feature-card">
+                    <div class="text-sm text-slate-500 dark:text-slate-400 mb-1">KOSDAQ</div>
+                    <div class="text-2xl font-bold text-blue-500">916.18</div>
+                    <div class="text-sm font-semibold text-blue-500 mt-1">▼ 4.39 (-0.48%)</div>
+                </div>
+                <!-- S&P 500 -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-slate-200 dark:border-gray-700 feature-card">
+                    <div class="text-sm text-slate-500 dark:text-slate-400 mb-1">S&P 500</div>
+                    <div class="text-2xl font-bold text-red-500">7,440.38</div>
+                    <div class="text-sm font-semibold text-red-500 mt-1">▲ 86.36 (+1.17%)</div>
+                </div>
+                <!-- NASDAQ -->
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-xl border border-slate-200 dark:border-gray-700 feature-card">
+                    <div class="text-sm text-slate-500 dark:text-slate-400 mb-1">NASDAQ</div>
+                    <div class="text-2xl font-bold text-red-500">25,820.14</div>
+                    <div class="text-sm font-semibold text-red-500 mt-1">▲ 522.53 (+2.07%)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 🇰🇷 한국 시장 심층 분석 -->
+        <section class="mb-12 reveal">
+            <h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+                🇰🇷 한국 시장 심층 분석
+            </h3>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700 space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
+                <p>
+                    2026년 6월 30일 코스피 지수는 전 거래일 대비 81.83포인트(+0.97%) 상승한 8,476.48에 거래를 마쳤습니다. 이날 시장의 가장 큰 특징은 외국인 투자자들의 유례없는 기록적인 대규모 매도세였습니다. 외국인은 무려 3조 8,196억 원을 순매도하며 8거래일 연속 '셀 코리아' 기조를 이어갔습니다. 반면 기관투자자가 2조 9,361억 원, 개인이 8,354억 원을 순매수하며 외국인의 물량을 적극적으로 소화해 냈습니다. 장중 반도체 업황 개선 기대감으로 지수는 8,600선까지 회복을 시도했으나, 오후 들어 환율 불안과 외국인의 추가 매물 출회로 상승폭이 일부 제한되었습니다.
+                </p>
+                <p>
+                    코스닥 지수는 전 거래일 대비 4.39포인트(-0.48%) 하락한 916.18로 장을 마감했습니다. 개장 직후 925.21까지 상승하며 호조를 보였으나, 장중 상승분을 반납하고 약세로 전환했습니다. 수급 측면에서는 외국인이 2,418억 원, 기관이 1,430억 원을 각각 순매도하며 지수를 끌어내렸고, 개인 홀로 3,902억 원을 순매수하며 방어에 나섰으나 역부족이었습니다. 특히 코스닥 시장에서는 이차전지 밸류체인과 일부 바이오 종목을 중심으로 차익실현 매물이 집중적으로 출회되는 양상을 보였습니다.
+                </p>
+                <p>
+                    업종별 흐름을 구체적으로 살펴보면, <strong>반도체 섹터</strong>가 시장 상승을 주도했습니다. 삼성전자는 전 거래일 대비 1.5% 상승한 11만 2,000원에, SK하이닉스는 2.3% 오른 24만 5,000원에 마감하며 지수 상승을 견인했습니다. 이는 간밤 미국 시장에서 필라델피아 반도체 지수가 급등한 데 따른 동조화 현상으로 풀이됩니다. 반면 <strong>자동차 업종</strong>은 현대차가 -1.2%(28만 원), 기아가 -0.8%(14만 5,000원) 하락하며 다소 부진했습니다. 환율 효과로 수출 실적 개선 기대감은 여전하지만, 피크아웃(정점 통과) 우려가 제기된 탓입니다. <strong>이차전지 섹터</strong>는 LG에너지솔루션이 보합세(0.0%, 45만 원)를 보인 가운데, 포스코홀딩스(-1.5%), 에코프로비엠(-2.1%) 등 소재주들이 약세를 기록하며 업종별 차별화가 뚜렷했습니다.
+                </p>
+                <p>
+                    시장 전문가들은 현재의 국내 증시가 극심한 수급 불균형 속에서 자생력을 시험받고 있다고 분석합니다. 1,500원대 중반에 달하는 초고환율 환경이 외국인 자금 이탈을 가속화하고 있으나, 기관들의 강력한 하방 지지력이 시장의 버팀목 역할을 하고 있습니다. 향후 시장의 향방은 수출 주도 대형주들의 2분기 실적 발표 결과와 함께, 환율 안정화 여부에 크게 좌우될 전망입니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- 3. 🇺🇸 미국 시장 심층 분석 -->
+        <section class="mb-12 reveal">
+            <h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+                🇺🇸 미국 시장 심층 분석
+            </h3>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700 space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
+                <p>
+                    미국 뉴욕증시는 지정학적 리스크 완화와 국채금리 하락이라는 우호적 매크로 환경에 힘입어 일제히 상승 마감했습니다. S&P 500 지수는 전일 대비 86.36포인트(+1.17%) 오른 7,440.38을 기록했으며, 기술주 중심의 나스닥 컴포지트 지수는 522.53포인트(+2.07%) 급등한 25,820.14로 거래를 마쳤습니다. 6월 초반 금리 인상 우려와 빅테크의 밸류에이션 부담으로 극심한 변동성을 겪었던 시장은 월말을 맞이하며 강한 안도 랠리(Relief Rally)를 시현했습니다.
+                </p>
+                <p>
+                    특히 이달 첫 2주간 약 2조 달러의 시가총액이 증발하며 시장의 우려를 자아냈던 <strong>매그니피센트 7(M7)</strong> 종목들이 이날 랠리의 선봉에 섰습니다. 개별 종목별로는 테슬라(Tesla)가 8.45% 폭등하며 가장 눈에 띄는 성과를 기록했습니다. 테슬라는 FSD(Full Self-Driving) 소프트웨어의 중국 내 전면 도입 승인 임박 소식과 함께 로보택시 비전이 다시금 시장의 기대를 모으며 강한 매수세가 유입되었습니다. 구글의 모회사 알파벳(Alphabet) 역시 AI 수익화 모델의 구체적인 성과 지표가 월가 리포트를 통해 호평받으며 4.96% 상승했습니다.
+                </p>
+                <p>
+                    아마존(Amazon)은 +3.18%, 메타(Meta)는 +2.20% 상승하며 견조한 흐름을 보였으며, 애플(Apple, +1.8%), 마이크로소프트(Microsoft, +1.5%), 엔비디아(Nvidia, +2.1%) 역시 일제히 반등에 성공했습니다. 이러한 M7의 일제 상승은 그동안 제기되었던 'AI 피크아웃' 논란을 잠재우고, 여전히 빅테크 기업들이 압도적인 이익 창출 능력을 기반으로 시장을 주도하고 있음을 방증하는 결과로 해석됩니다.
+                </p>
+                <p>
+                    월가 전문가들은 이번 랠리의 배경으로 '금리 민감도 하락'과 '실적 기대감의 재점화'를 꼽고 있습니다. 다가오는 2분기 어닝 시즌을 앞두고 주요 투자은행(IB)들이 빅테크 기업들의 실적 전망치를 상향 조정하고 있으며, 시장은 다시 펀더멘털에 집중하는 양상입니다. 다만, 단기 급등에 따른 피로도와 고용 지표 등 거시 경제 데이터의 결과에 따라 변동성이 재차 확대될 가능성도 염두에 두어야 합니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- 4. 🌍 매크로 & 글로벌 이슈 -->
+        <section class="mb-12 reveal">
+            <h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+                🌍 매크로 & 글로벌 이슈
+            </h3>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700 space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
+                <p>
+                    글로벌 거시경제 환경에서 가장 이목을 끄는 지표는 극단적으로 치솟은 <strong>원/달러 환율</strong>입니다. 6월 30일 서울 외환시장에서 원/달러 환율은 1,549.4원에 마감하며 1998년 아시아 외환위기 이후 볼 수 없었던 초고환율 시대를 장기화하고 있습니다. 무려 30거래일 연속 1,500원대 중반에 머무르고 있는 현재 상황은, 미국 경제의 '나홀로 호황'으로 인한 강달러 압력과 한국의 구조적 저성장 우려가 맞물린 복합적 결과입니다. 이는 수입 물가 상승으로 인한 인플레이션 압력을 가중시키고 외국인 자금의 지속적 이탈을 야기하는 핵심 원인이 되고 있습니다.
+                </p>
+                <p>
+                    반면, 시장에 안도감을 준 요인은 <strong>국제 유가와 채권 금리의 하락</strong>이었습니다. 호르무즈 해협을 둘러싼 지정학적 긴장감이 미국과 이란 간의 외교적 대화 재개 소식으로 다소 완화되면서, 브렌트유(Brent) 가격은 배럴당 73.49달러로 전 고점 대비 의미 있는 하락폭을 기록했습니다. 유가의 하향 안정화는 글로벌 증시를 짓누르던 물가 상승 우려를 일부 경감시켰으며, 에너지 비용 부담 완화로 기업들의 마진 개선 기대감을 높였습니다.
+                </p>
+                <p>
+                    미국 국채 시장 역시 안정세를 되찾았습니다. 글로벌 벤치마크 역할을 하는 <strong>미 국채 10년물 금리</strong>는 4.37%로, <strong>30년물 장기 금리</strong>는 4.86%로 각각 소폭 하락(가격 상승)했습니다. 고용 지표의 둔화 조짐과 연방준비제도(Fed) 인사들의 덜 매파적인 발언이 금리 하방 압력으로 작용했습니다. 금리의 안정화는 주식 시장, 특히 밸류에이션이 높은 기술주와 성장주에 직접적인 호재로 작용하며 이날의 나스닥 급등을 뒷받침하는 핵심 매크로 배경이 되었습니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- 5. 💡 투자 시사점 & 전략 -->
+        <section class="mb-12 reveal">
+            <h3 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white flex items-center gap-2">
+                💡 투자 시사점 & 전략
+            </h3>
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700 space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
+                <p>
+                    향후 1주일간 주식 시장은 강력했던 구제 랠리의 연속성을 확인하는 시험대에 오를 것입니다. <strong>투자 기회 요인</strong>으로는 하반기 실적 가시성이 뚜렷한 AI 소프트웨어, 자율주행, 차세대 반도체 장비 섹터를 꼽을 수 있습니다. 미국 M7 기업들의 자본적 지출(CAPEX) 확대 기조가 재확인되고 있어, 글로벌 밸류체인 내 핵심 경쟁력을 갖춘 국내 소부장(소재·부품·장비) 기업들에 대한 옥석 가리기가 필요합니다. 특히 테슬라의 반등을 계기로 소외되었던 자율주행 로보틱스 관련주로의 온기 확산이 기대됩니다.
+                </p>
+                <p>
+                    하지만 <strong>리스크 요인</strong>에 대한 경계감도 늦출 수 없습니다. 가장 큰 뇌관은 1,550원 돌파를 위협하는 원/달러 환율의 향방입니다. 단기적으로 환율 정점론이 부상할 수 있으나, 외환당국의 개입 의지가 시험받는 구간인 만큼 외국인 수급 변동성에 대비한 보수적 리스크 관리가 요구됩니다. 극심한 환율 스트레스는 내수 중심 중소형주에 치명적일 수 있으므로, 포트폴리오를 수출 비중이 높고 달러 자산을 보유한 우량 대형주 위주로 압축하는 전략이 유효합니다.
+                </p>
+                <p>
+                    결론적으로, 현 장세는 '단기 모멘텀 플레이'보다 '펀더멘털 기반의 분할 매수'가 적합한 시점입니다. 변동성이 극심한 가운데서도 빅테크 중심의 구조적 성장은 유효하므로, 시장의 노이즈로 인해 우량주의 밸류에이션 매력이 부각될 때마다 비중을 점진적으로 늘려가는 '바이 앤 홀드(Buy & Hold)' 전략을 추천합니다. 아울러 다가오는 주말 발표될 미국의 핵심 고용 지표와 한국의 수출입 동향 데이터 결과에 따라 시장의 색깔이 급변할 수 있음을 인지하고 유연하게 대응하시기 바랍니다.
+                </p>
+            </div>
+        </section>
+"""
+
+with open(template_path, 'r', encoding='utf-8') as f:
+    base_html = f.read()
+
+# Replace title
+base_html = base_html.replace("<title>Page Title - Invest Insight</title>", "<title>일일 투자 인사이트 (2026-06-30) - Invest Insight</title>")
+
+# Replace main content
+import re
+# We look for the main block to replace
+start_idx = base_html.find('<!-- 여기에 새로운 콘텐츠를 추가하세요 -->')
+end_idx = base_html.find('</div>', start_idx)
+end_idx = base_html.find('</div>', end_idx + 6) 
+
+if start_idx != -1 and end_idx != -1:
+    # Finding the exact boundary of <main> inner content
+    main_start = base_html.find('<div class="max-w-7xl mx-auto">') + len('<div class="max-w-7xl mx-auto">')
+    main_end = base_html.find('</main>')
+    if main_start != -1 and main_end != -1:
+        new_html = base_html[:main_start] + "\n" + html_content + "\n" + base_html[main_end-14:]
+        
+        with open(target_html, 'w', encoding='utf-8') as f:
+            f.write(new_html)
+        print("HTML file generated successfully.")
+    else:
+        print("Could not find exact main bounds.")
+else:
+    print("Could not find the replace comment.")
