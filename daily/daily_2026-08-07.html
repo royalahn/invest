@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일일 투자 인사이트 - 2026-08-07</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                        mono: ['"Cascadia Mono"', 'Pretendard', 'monospace'],
+                    },
+                    colors: {
+                        gray: {
+                            900: '#0f1115',
+                            800: '#161b22',
+                            700: '#21262d',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // 초기 테마 설정 (기본값 Light)
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            updateThemeIcon();
+        }
+        
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            if (sunIcon && moonIcon) {
+                sunIcon.style.display = isDark ? 'block' : 'none';
+                moonIcon.style.display = isDark ? 'none' : 'block';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        html, body {
+            overflow-x: hidden;
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            word-break: keep-all;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-header {
+            background: rgba(15, 17, 21, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #0ea5e9, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
+        }
+        .dark .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+        }
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+        .glow-bg {
+            position: absolute;
+            width: 100%;
+            max-width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        .dark .glow-bg {
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(15, 17, 21, 0) 70%);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-[#0f1115] text-slate-900 dark:text-e2e8f0 min-h-screen flex flex-col selection:bg-sky-200 selection:text-sky-900 dark:selection:bg-sky-500/30 dark:selection:text-sky-200">
+
+    <div class="glow-bg"></div>
+
+    <!-- Header Section -->
+    <header class="glass-header sticky top-0 z-50 py-4 px-6 sm:px-12 lg:px-24">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                        Invest <span class="gradient-text">Insight</span>
+                    </h1>
+                </a>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleTheme()" class="p-2 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle Theme">
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="moon-icon" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <main class="flex-grow pb-24 px-6 sm:px-12 lg:px-24 pt-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-left py-10 reveal">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-6">
+                    일일 투자 인사이트 <span class="gradient-text">2026-08-07</span>
+                </h2>
+                
+                <!-- 1. 한눈에 보기 -->
+                <section class="mb-12 reveal">
+                    <h3 class="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-yellow-500"></i> 한눈에 보기
+                    </h3>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md border border-slate-200 dark:border-gray-700 mb-6 hover:border-sky-300 dark:hover:border-sky-600 transition-colors">
+                        <ul class="list-disc pl-5 space-y-3 text-slate-700 dark:text-slate-300 font-medium">
+                            <li><strong>한국 증시 롤러코스터:</strong> 전일 코스피 매도 사이드카 발동(-4.58%) 후, 금일 외국인 순매수 전환으로 6,400선 재탈환 성공.</li>
+                            <li><strong>미국 빅테크(M7) 차별화 장세:</strong> AI 인프라 투자(CAPEX) 효용성에 대한 시장의 엄격한 잣대가 적용되며, 마이크로소프트와 애플은 방어력을 보인 반면 엔비디아와 알파벳은 변동성 확대.</li>
+                            <li><strong>매크로 지표 안정화 시도:</strong> 환율 1,422원대 하향 안정, 국제유가(WTI) 배럴당 75달러 선 안착 등 극단적 리스크 완화 속 미국 10년물 금리(4.6%) 향방 주목.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="overflow-x-auto rounded-xl shadow-sm border border-slate-200 dark:border-gray-700">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200">
+                                    <th class="py-4 px-6 font-semibold">지수/지표</th>
+                                    <th class="py-4 px-6 font-semibold">현재가</th>
+                                    <th class="py-4 px-6 font-semibold">전일대비 (등락률)</th>
+                                    <th class="py-4 px-6 font-semibold">비고</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-slate-200 dark:divide-gray-700 text-slate-700 dark:text-slate-300">
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-750/50 transition-colors">
+                                    <td class="py-4 px-6 font-medium">KOSPI</td>
+                                    <td class="py-4 px-6">6,400.12</td>
+                                    <td class="py-4 px-6 text-red-500 font-bold">▲ 103.74 (+1.64%)</td>
+                                    <td class="py-4 px-6 text-sm">외국인 2,655억 순매수 (반등 주도)</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-750/50 transition-colors">
+                                    <td class="py-4 px-6 font-medium">KOSDAQ</td>
+                                    <td class="py-4 px-6">810.45</td>
+                                    <td class="py-4 px-6 text-red-500 font-bold">▲ 8.78 (+1.09%)</td>
+                                    <td class="py-4 px-6 text-sm">개인·기관 쌍끌이 매수</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-750/50 transition-colors">
+                                    <td class="py-4 px-6 font-medium">S&P 500</td>
+                                    <td class="py-4 px-6">7,723.53</td>
+                                    <td class="py-4 px-6 text-slate-500 font-medium">-</td>
+                                    <td class="py-4 px-6 text-sm">전일 종가 기준</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-750/50 transition-colors">
+                                    <td class="py-4 px-6 font-medium">NASDAQ</td>
+                                    <td class="py-4 px-6">26,208.43</td>
+                                    <td class="py-4 px-6 text-slate-500 font-medium">-</td>
+                                    <td class="py-4 px-6 text-sm">전일 종가 기준</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-750/50 transition-colors">
+                                    <td class="py-4 px-6 font-medium">USD/KRW</td>
+                                    <td class="py-4 px-6">1,422.30 원</td>
+                                    <td class="py-4 px-6 text-blue-500 font-bold">▼ 4.20 (-0.29%)</td>
+                                    <td class="py-4 px-6 text-sm">단기 급등 후 하향 안정화 진입</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 dark:hover:bg-gray-750/50 transition-colors">
+                                    <td class="py-4 px-6 font-medium">WTI (유가)</td>
+                                    <td class="py-4 px-6">$ 76.50</td>
+                                    <td class="py-4 px-6 text-blue-500 font-bold">▼ 0.85 (-1.09%)</td>
+                                    <td class="py-4 px-6 text-sm">지정학적 리스크 소폭 완화</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 2. 한국 시장 심층 분석 -->
+                <section class="mb-12 reveal">
+                    <h3 class="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <span class="text-xl">🇰🇷</span> 한국 시장 심층 분석
+                    </h3>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-slate-200 dark:border-gray-700 space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+                        <p>
+                            <strong>전례 없는 변동성과 사이드카 발동 이후의 극적 반등:</strong> 전일(8월 6일) 코스피는 장중 4.58% 급락하며 6,296.38 포인트로 마감하는 충격을 안겨주었습니다. 이는 반도체 대장주인 삼성전자(-4.1%)와 SK하이닉스(-5.6%)를 향한 대규모 매물 출회가 주요 원인이었으며, 결국 매도 사이드카까지 발동되는 등 시장의 공포 심리가 극에 달했습니다. 외국인은 3조 3,495억 원, 기관은 1,214억 원을 순매도하며 지수 하락을 주도했고, 개인 투자자가 3조 3,388억 원을 홀로 받아내며 하단을 방어하는 전형적인 '패닉 셀링' 장세가 연출되었습니다.
+                        </p>
+                        <p>
+                            <strong>외국인 수급의 극적인 '사자' 전환:</strong> 그러나 8월 7일 본장 개장과 함께 시장 분위기는 급반전되었습니다. 개장 직후부터 저가 매수세가 강하게 유입되며 코스피는 단숨에 6,400선을 재탈환(현재 6,400.12, +1.64%)했습니다. 핵심 동력은 단연 <span class="text-sky-600 dark:text-sky-400 font-semibold">외국인 수급의 턴어라운드</span>입니다. 전일 3조 원대 물량을 쏟아냈던 외국인은 이날 오전 기준 2,655억 원을 순매수하며 시장의 투자 심리를 빠르게 회복시켰습니다. 시장 전문가들은 전일의 과도한 낙폭이 밸류에이션 매력을 부각시켰으며, 글로벌 증시 전반의 시스템 리스크로 전이되지는 않을 것이라는 안도감이 작용했다고 분석하고 있습니다.
+                        </p>
+                        <p>
+                            <strong>업종별 차별화와 코스닥의 나홀로 랠리:</strong> 섹터별로 살펴보면, 전일 낙폭이 과대했던 반도체, 자동차(현대차 +2.3%, 기아 +1.8%), 금융업(KB금융 +1.5%)을 중심으로 강력한 저가 매수세가 몰리며 지수 상승을 견인하고 있습니다. 반면, 방어주 성격이 강했던 통신과 유틸리티 업종은 상대적으로 상승 탄력이 둔화된 모습입니다. 한편, 코스닥 지수는 전일 코스피 급락에도 불구하고 0.26% 상승 마감한 데 이어, 금일 역시 810.45(+1.09%)를 기록하며 5거래일 연속 랠리를 이어가고 있습니다. 이는 개인(1,200억 원 순매수)과 기관(850억 원 순매수)의 쌍끌이 매수세가 바이오, 2차전지 소재 등 중소형 성장주로 집중된 결과로 풀이되며, 코스피 대비 상대적 강세가 뚜렷하게 나타나고 있습니다.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- 3. 미국 시장 심층 분석 -->
+                <section class="mb-12 reveal">
+                    <h3 class="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <span class="text-xl">🇺🇸</span> 미국 시장 심층 분석
+                    </h3>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-slate-200 dark:border-gray-700 space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+                        <p>
+                            <strong>'M7'을 향한 엄격한 실적 잣대와 CAPEX 논란:</strong> 최근 미국 증시는 S&P 500이 7,723선, 나스닥이 26,208선에 머무르는 가운데, 이른바 'Magnificent 7(M7)' 종목들에 대한 투자자들의 옥석 가리기가 치열하게 전개되고 있습니다. 시장의 핵심 화두는 단연 <span class="text-sky-600 dark:text-sky-400 font-semibold">'인공지능(AI) 자본적지출(CAPEX)의 수익화 여부'</span>입니다. 과거 무조건적인 AI 랠리와 달리, 이제 시장은 천문학적인 데이터센터 투자 비용이 실제 기업의 잉여현금흐름(FCF) 증가로 언제 이어질 것인지 구체적인 증명을 요구하고 있습니다. 이로 인해 메타(META)와 알파벳(GOOGL) 등은 강력한 실적 가이던스에도 불구하고 투자 비용 확대에 대한 시장의 우려로 주가 변동성이 확대되는 양상을 보였습니다.
+                        </p>
+                        <p>
+                            <strong>실적 시즌의 진정한 승자들 - 마이크로소프트와 아마존:</strong> 이 과정에서 차별적인 성과를 보여준 기업은 단연 마이크로소프트(MSFT)와 아마존(AMZN)입니다. 마이크로소프트(+2.4%)는 Azure 클라우드 부문에서 AI가 견인하는 실질적 매출 성장을 완벽히 입증해냈으며, 아마존(+3.1%) 역시 AWS의 성장률 가속화와 비용 통제 능력을 뽐내며 지난 실적 발표 직후 강력한 매수세가 유입되었습니다. 반면, AI 인프라의 최정점에 선 엔비디아(NVDA)는 실적 고점 논란 및 CXMT 등 경쟁 심화 우려로 단기적인 조정 압력(-1.8%)에 직면하며 다소 쉬어가는 흐름을 보여주고 있습니다.
+                        </p>
+                        <p>
+                            <strong>'안전 피난처'로 부상한 애플의 재발견:</strong> 흥미로운 점은 애플(AAPL)의 위상 변화입니다. 애플은 최근 $342라는 사상 최고치를 경신한 후 단기 숨고르기에 들어갔으나, 여타 M7 대비 상대적으로 자체 데이터센터(CAPEX) 투자 부담이 적다는 점이 오히려 매력으로 부각되고 있습니다. 이른바 <span class="text-sky-600 dark:text-sky-400 font-semibold">'Anti-CAPEX AI' 플레이</span>로 불리는 이러한 기조 덕분에, 매크로 불확실성이 커지는 국면에서 안정적인 현금 창출력을 앞세운 애플은 기술주 내에서 가장 강력한 펀더멘털 방어력을 제공하는 주식으로 재평가받고 있습니다. 테슬라(TSLA) 역시 로보택시 기대감과 전기차 캐즘(Chasm) 사이에서 방향성을 탐색하며 좁은 박스권 장세를 이어가고 있습니다.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- 4. 매크로 & 글로벌 이슈 -->
+                <section class="mb-12 reveal">
+                    <h3 class="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <span class="text-xl">🌍</span> 매크로 & 글로벌 이슈
+                    </h3>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-slate-200 dark:border-gray-700 space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+                        <p>
+                            <strong>피크아웃을 지나는 원/달러 환율:</strong> 가장 우려되었던 외환시장이 안정을 되찾고 있다는 점은 국내 증시에 큰 호재입니다. 7월 중순까지만 해도 1,490원~1,500원대까지 치솟으며 자본 유출 우려를 자극했던 원/달러 환율은 현재 <span class="font-bold text-sky-600 dark:text-sky-400">1,422원대까지 뚜렷한 하향 안정화 추세</span>를 보이고 있습니다. 이는 미국 연준(Fed)의 통화정책 경로가 어느 정도 시장 가격에 반영되었고, 중동 지역의 지정학적 리스크 프리미엄이 걷히고 있기 때문입니다. 환율 안정은 외국인 투자자들의 환차손 우려를 불식시켜, 금일 코스피 외국인 순매수 전환의 가장 핵심적인 논리로 작용하고 있습니다.
+                        </p>
+                        <p>
+                            <strong>유가 하락과 인플레이션 우려 완화:</strong> 국제유가(WTI) 역시 배럴당 76.50달러 수준으로 내려오며 거시 경제의 부담을 덜어주고 있습니다. 한때 90달러를 상회했던 유가가 하락 안정된 것은 호르무즈 해협을 둘러싼 극단적인 원유 공급 차질 우려가 시장의 예상을 밑돌았기 때문입니다. 유가의 안정은 미국 및 글로벌 물가(CPI, PPI) 상승 압력을 크게 낮추어, 다가오는 주요 경제 지표 발표 시 연준에게 금리 인하에 대한 명분을 제공할 수 있다는 점에서 시장은 이를 긍정적으로 해석(Goldilocks 시나리오)하고 있습니다.
+                        </p>
+                        <p>
+                            <strong>미국 국채 금리의 높은 고도 비행:</strong> 반면, 채권 시장의 긴장감은 여전히 팽팽합니다. 미국 10년물 국채 금리가 4.6%대, 30년물 국채 금리가 5.2%대를 유지하고 있다는 점은 주식 시장, 특히 고밸류에이션 성장주에 지속적인 할인율 부담으로 작용합니다. 시장 참가자들은 인플레이션이 둔화되더라도 <span class="font-semibold">'고금리 장기화(Higher for Longer)'</span> 기조 자체는 쉽게 꺾이지 않을 것으로 전망하고 있습니다. 향후 발표될 8월 고용보고서와 물가 지표에 따라 이 금리 레벨이 4.5%를 하향 돌파할지 여부가 하반기 글로벌 증시의 상단을 결정지을 최대 트리거가 될 것입니다.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- 5. 투자 시사점 & 전략 -->
+                <section class="mb-12 reveal">
+                    <h3 class="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <span class="text-xl">💡</span> 투자 시사점 & 전략
+                    </h3>
+                    <div class="bg-gradient-to-br from-indigo-50 to-sky-50 dark:from-gray-800 dark:to-gray-800/80 rounded-xl p-8 shadow-md border border-indigo-100 dark:border-gray-700 space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+                        <p>
+                            <strong>단기 변동성 활용 매수 전략 유효:</strong> 어제와 오늘의 코스피 롤러코스터 장세가 시사하는 바는 명확합니다. 극단적인 공포에 휩싸인 투매(패닉 셀링)에 동참하기보다는, 펀더멘털이 견조한 핵심 종목들에 대해 이를 <strong>저가 매수의 기회</strong>로 활용하는 전략이 유효하다는 점입니다. 환율이 1,420원대로 하향 안정화되며 외국인 수급의 이탈 유인이 크게 감소했으므로, 향후 1주일간 지수의 추가 하락보다는 6,400선 안착 여부를 타진하는 단기 반등장이 연출될 가능성이 높습니다.
+                        </p>
+                        <p>
+                            <strong>주도주 교체 및 퀄리티 주식 선별:</strong> 미국 증시의 M7 차별화 양상에서 보듯, 막연한 AI 기대감만으로 주가가 오르는 시기는 지났습니다. 실질적인 현금 창출 능력을 보여준 기업(마이크로소프트, 아마존, 애플)과 그렇지 않은 기업 간의 주가 수익률 격차는 더욱 벌어질 것입니다. 국내 증시에서도 단순히 실적 가이던스만 높은 주식보다는, 확실한 이익 가시성과 자본 효율성(ROE)을 갖춘 <span class="font-bold text-indigo-600 dark:text-indigo-400">'퀄리티 주식'</span> 중심의 포트폴리오 압축이 필요합니다. 
+                        </p>
+                        <p>
+                            <strong>섹터별 대응 전략:</strong> 반도체 업종은 엔비디아의 단기 조정과 맞물려 변동성이 지속될 수 있으므로 분할 매수로 접근하는 것이 바람직합니다. 대신, 최근 코스닥의 5거래일 연속 상승을 이끈 바이오 및 헬스케어, 그리고 환율 및 유가 안정의 수혜를 볼 수 있는 내수/소비재 섹터로의 전술적 비중 확대(Tactical Asset Allocation)를 고려해 볼 만합니다. 리스크 요인으로는 8월 중순 예정된 미국의 핵심 물가 지표(CPI) 발표가 있으며, 예상치를 상회할 경우 다시금 국채 금리가 급등할 수 있으므로 일정 수준의 현금 비중(15~20%)은 유지하는 방어적 유연성이 필요합니다.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer Section -->
+    <footer class="border-t border-slate-200 dark:border-gray-800 py-10 mt-auto bg-white dark:bg-gray-900/50">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm font-medium">
+                <i class="fa-solid fa-bolt text-xl text-yellow-500"></i>
+                <span>&copy; 2026 Invest Insight. All rights reserved.</span>
+            </div>
+            <div class="text-slate-400 dark:text-slate-500 text-xs">
+                Generated by AI Coding Assistant
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        setTimeout(reveal, 100);
+    </script>
+</body>
+</html>
