@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일일 투자 인사이트 (2026-09-13) - Invest Insight</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                        mono: ['"Cascadia Mono"', 'Pretendard', 'monospace'],
+                    },
+                    colors: {
+                        gray: {
+                            900: '#0f1115',
+                            800: '#161b22',
+                            700: '#21262d',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // 초기 테마 설정 (기본값 Light)
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            updateThemeIcon();
+        }
+        
+        function updateThemeIcon() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            if (sunIcon && moonIcon) {
+                sunIcon.style.display = isDark ? 'block' : 'none';
+                moonIcon.style.display = isDark ? 'none' : 'block';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+    </script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        html, body {
+            overflow-x: hidden;
+        }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            word-break: keep-all;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-header {
+            background: rgba(15, 17, 21, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #0ea5e9, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
+        }
+        .dark .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+        }
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .light-card-hover:hover {
+            box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1), 0 10px 10px -5px rgba(14, 165, 233, 0.04);
+            border-color: #7dd3fc;
+        }
+        .dark .dark-card-hover:hover {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.1);
+            border-color: #38bdf8;
+        }
+        .glow-bg {
+            position: absolute;
+            width: 100%;
+            max-width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        .dark .glow-bg {
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(15, 17, 21, 0) 70%);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Terminal window styles */
+        .terminal-window {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .dark .terminal-window {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid #21262d;
+        }
+        .terminal-header {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #e2e8f0;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        .dark .terminal-header {
+            background: #0f1115;
+            border-bottom: 1px solid #21262d;
+        }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        pre, code, .code-block { font-family: "Cascadia Mono", "Pretendard", monospace; }
+        
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-[#0f1115] text-slate-900 dark:text-e2e8f0 min-h-screen flex flex-col selection:bg-sky-200 selection:text-sky-900 dark:selection:bg-sky-500/30 dark:selection:text-sky-200">
+
+    <div class="glow-bg"></div>
+
+    <!-- Header Section -->
+    <header class="glass-header sticky top-0 z-50 py-4 px-6 sm:px-12 lg:px-24">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white shadow-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    Invest <span class="gradient-text">Insight</span>
+                </h1>
+            </div>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-8 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                    <!-- 페이지 이동에 필요한 네비게이션을 여기에 작성하세요 -->
+                </ul>
+            </nav>
+            <div class="flex items-center gap-4">
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-gray-700 transition-colors" aria-label="Toggle Theme">
+                    <!-- Sun Icon (shows in dark mode) -->
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <!-- Moon Icon (shows in light mode) -->
+                    <svg id="moon-icon" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                
+                <a href="https://github.com/royalahn/invest" target="_blank" class="hidden sm:flex px-5 py-2.5 rounded-full bg-slate-900 dark:bg-white/10 hover:bg-slate-800 dark:hover:bg-white/20 text-white font-medium text-sm transition-all border border-transparent dark:border-white/10 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <!-- Main Section -->
+    <main class="flex-grow pb-24 px-6 sm:px-12 lg:px-24 pt-12">
+        <div class="max-w-7xl mx-auto space-y-12">
+            
+            <!-- Title Header -->
+            <div class="text-center py-8">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 text-sm font-semibold mb-4 border border-sky-200 dark:border-sky-800">
+                    <i class="fa-solid fa-calendar-day"></i> 2026년 9월 13일 주말 시장 종합 & 차주 슈퍼위크 프리뷰
+                </div>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight leading-tight">
+                    일일 투자 인사이트 <span class="gradient-text">— 2026년 9월 13일</span>
+                </h2>
+                <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                    美 8월 근원 CPI 둔화(3.1%) 안도 랠리·10년물 금리(4.88%) 안정, 역외 NDF 1,338원대 속 9월 FOMC(15~16일) '운명의 슈퍼위크'를 앞둔 KOSPI 7,000선 탈환 전략 및 포트폴리오 심층 분석
+                </p>
+            </div>
+
+            <!-- 1. 한눈에 보기 -->
+            <section class="reveal feature-card light-card-hover dark:dark-card-hover bg-white dark:bg-gray-800/50 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-gray-700 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-gray-700 pb-4 mb-6">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                        <i class="fa-solid fa-bolt text-sky-500"></i> 1. 한눈에 보기
+                    </h3>
+                    <span class="text-xs font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-gray-700 px-2.5 py-1 rounded-md">2026-09-13 주말 종합 기준</span>
+                </div>
+
+                <!-- 핵심 3줄 요약 카드 -->
+                <div class="mb-8 grid grid-cols-1 gap-4">
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200 dark:border-gray-700/80 flex items-start gap-3.5">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 font-bold shrink-0 text-sm">🇰🇷</span>
+                        <div class="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+                            <strong class="text-slate-900 dark:text-white font-semibold">한국 증시:</strong> 9월 11일 마감에서 외국인(-2조 2,915억 원)과 기관(-1조 2,253억 원)의 3.5조 원대 매도 폭탄에도 불구하고, 개인 투자자의 1조 8,675억 원에 달하는 결사적 방어에 힘입어 KOSPI는 6,909.91(-1.76%)로 6,900선을 지켜냈습니다. 9월 1~10일 반도체 수출 270.1% 폭증(+165억 달러)에 이어 주말 뉴욕 증시 급반등과 역외 NDF 환율 1,338.50원 급락(▼7.40원)이 가세함에 따라, 14일(월) 개장 시 외국인 숏커버링 유입과 함께 7,000선 조기 탈환 기대감이 급부상했습니다.
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200 dark:border-gray-700/80 flex items-start gap-3.5">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-bold shrink-0 text-sm">🇺🇸</span>
+                        <div class="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+                            <strong class="text-slate-900 dark:text-white font-semibold">미국 증시:</strong> 8월 헤드라인 CPI(+3.6%) 반등에도 불구하고 연준 정책의 핵심 지표인 근원 CPI(+3.1%)가 예상치를 밑돌며 둔화세를 재확인하자, 4거래일 연속 하락하던 뉴욕 증시가 폭발적인 안도 랠리를 펼쳤습니다. S&P 500은 7,678.45(+1.14%)로 7,600선을 단숨에 회복했고 나스닥은 26,458.12(+1.44%)로 급반등했습니다. 엔비디아(+3.41%, $225.80)가 허깅페이스 인수 시너지로 반등을 주도했고, 메타(+2.14%, $658.20)는 AI '뮤즈' 커머스 제휴사 1만 개 돌파 소식에 사상 최고가를 재경신했습니다.
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200 dark:border-gray-700/80 flex items-start gap-3.5">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 font-bold shrink-0 text-sm">🌍</span>
+                        <div class="text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
+                            <strong class="text-slate-900 dark:text-white font-semibold">매크로 환경:</strong> 미 10년물 국채금리가 4.97%에서 4.885%로 8.5bp 급락하며 심리적 마지노선이었던 5.0% 상방 돌파를 저지했습니다. 국제유가는 미국의 전략비축유(SPR) 방출 검토 소식에 WTI가 배럴당 101.15달러(-1.30%)로 진정세를 보였으며, CME 페드워치의 9월 FOMC 25bp 금리 인상 확률은 62%에서 43.6%로 급락하고 동결 확률이 56.4%로 과반을 회복했습니다. 달러 인덱스 약세 속에 원/달러 NDF 역외환율은 1,338.50원으로 안정되었습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 핵심 지표 테이블 -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-100 dark:bg-gray-900/80 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-gray-700">
+                            <tr>
+                                <th class="px-5 py-3.5">지수 / 지표</th>
+                                <th class="px-5 py-3.5 text-right">종가 / 수치</th>
+                                <th class="px-5 py-3.5 text-right">전일 대비</th>
+                                <th class="px-5 py-3.5 text-right">등락률</th>
+                                <th class="px-5 py-3.5 text-center">주요 특징 및 시장 반응</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-gray-700 text-slate-700 dark:text-slate-300 font-medium">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> 코스피 (KOSPI)
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">6,909.91</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">▼ 124.01</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">-1.76%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">주간 6,900선 사수 완료, 미 증시 반등 및 역외 환율 급락으로 14일 7,000선 탈환 시도 유력</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span> 코스닥 (KOSDAQ)
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">820.64</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">▼ 16.28</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">-1.95%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">외인·기관 동반 매도 속 820선 방어, 금리 5% 돌파 공포 진정으로 바이오·2차전지 주초 반등 모색</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> S&P 500
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">7,678.45</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">▲ 86.75</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">+1.14%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">4일 연속 하락세 마감 후 7,600선 탈환, 근원 CPI 둔화(3.1%)가 촉발한 기관 숏스퀴즈 안도 랠리</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> 나스닥 (NASDAQ)
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">26,458.12</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">▲ 376.40</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">+1.44%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">엔비디아(+3.4%)와 빅테크 전반 강세, 금리 하락 수혜로 기술주 중심 강력한 탄력성 과시</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> 다우 존스 30
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">52,438.80</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">▲ 374.70</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">+0.72%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">금융·산업재·헬스케어 동반 반등 속 52,000선 안착 지속</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> 러셀 2000
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">2,789.20</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">▲ 49.80</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">+1.82%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">금리 민감 중소형주 쇼트커버링 집중, 3대 주요 지수 대비 상대적 초과 수익률 달성</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-violet-500"></span> 필라델피아 반도체 (SOX)
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">8,420.50</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">▲ 179.60</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">+2.18%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">엔비디아·TSMC 강세 및 차세대 AI 서버 수요 가속화로 사상 최고가권 재진입</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 미 국채 10년물 금리
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">4.885%</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">▼ 8.5 bp</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">-1.71%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">장중 4.97% 도달 후 5% 저항선에서 급반락, 장기채 금리 발작 국면 극적 진정</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span> 미 국채 2년물 금리
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">4.542%</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">▼ 9.2 bp</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">-1.98%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">연준 9월 FOMC 금리 동결 확률 56% 확대 반영하며 단기 금리 큰 폭 안정</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> 국고채 3년물 (한국)
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">4.014%</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">▲ 3.8 bp</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-semibold">+0.95%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">4%선 안착으로 은행 순이자마진(NIM) 지지 vs 내수 회사채 조달비용 상승 공존</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 원/달러 환율 (NDF 역외)
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">1,338.50원</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">▼ 7.40원</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">-0.55%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">달러 인덱스 104.2선 반락 반영, 14일 서울 외환시장 갭다운 출발 및 외인 환차손 우려 해소</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors">
+                                <td class="px-5 py-3.5 font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> WTI 원유
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">$101.15</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">▼ $1.35</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-blue-500 font-semibold">-1.30%</td>
+                                <td class="px-5 py-3.5 text-center text-xs text-slate-500 dark:text-slate-400">미 정부 전략비축유(SPR) 추가 방출 검토 소식에 102.5달러 고점에서 반락 진정</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 2. 한국 시장 심층 분석 -->
+            <section class="reveal feature-card light-card-hover dark:dark-card-hover bg-white dark:bg-gray-800/50 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-gray-700 shadow-sm">
+                <div class="border-b border-slate-200 dark:border-gray-700 pb-4 mb-6">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="text-2xl">🇰🇷</span> 2. 한국 시장 심층 분석: 6,900선 하방 경직성 확보와 7,000선 조기 탈환 시나리오
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        주간 마감의 기술적 의의, 외인 2.29조·기관 1.23조 매도 일단락과 선물 숏커버링 폭발 가능성, 주요 3대 업종별 차별화 흐름
+                    </p>
+                </div>
+
+                <div class="space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-base">
+                    <!-- 문단 1 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-blue-500"></i> [지수 흐름 세부 분석] 6,900선 사수의 기술적 함의: 주간 변동성 흡수와 120일선(6,880선) 지지력 재확인
+                        </h4>
+                        <p>
+                            지난주 국내 증시는 미 10년물 국채금리가 4.97%까지 치솟고 국제유가가 배럴당 102달러를 돌파하는 복합 거시 충격 속에서도 <strong>KOSPI가 6,909.91(-1.76%)로 6,900선의 심리적 마지노선을 지켜내며</strong> 극적인 하방 경직성을 증명했습니다. 지수는 장중 한때 6,872.10까지 밀리며 기술적 지지선 붕괴 위험에 직면했으나, 중기 추세 지지선인 120일 이동평균선(6,880선) 부근에서 대기 매수세가 강력하게 유입되면서 낙폭을 축소했습니다. 코스닥 지수 역시 16.28포인트(-1.95%) 하락한 820.64로 마감했으나, 820선의 지지력을 확인하며 투매가 진정되는 양상을 보였습니다. 주말 사이 미국 뉴욕 증시가 8월 근원 CPI 둔화(3.1%)를 기폭제로 1%대 급반등에 성공했고, 역외 NDF 환율이 1,338.50원으로 급락한 점은 14일(월) 개장과 동시에 <strong>코스피가 6,980~7,020선 안착을 단숨에 시도할 수 있는 강력한 모멘텀</strong>을 제공합니다. 이번 6,900선 사수는 단순한 수치 방어가 아니라, 매크로 공포의 정점에서 형성된 견고한 바닥권(Double Bottom)으로서 7,000선 조기 탈환의 전초기지가 구축되었음을 시사합니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 2 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-arrows-split-up-and-left text-indigo-500"></i> [수급 동향 심층 분석] 외인 2.29조·기관 1.23조 매도 일단락과 개인 1.87조 방어: 월요일 선물 3.8만 계약 숏커버링 폭발 기대
+                        </h4>
+                        <p>
+                            수급 측면에서는 <strong>외국인과 기관의 기록적인 패시브·차익 매도 물량을 개인 투자자가 1.87조 원의 막강한 실탄으로 완벽히 흡수한 구조</strong>가 두드러졌습니다. 외국인 투자자는 글로벌 포트폴리오의 신흥국 위험 축소 및 통화 헤지 롤오버 과정에서 <strong>코스피 시장에서만 2조 2,915억 원을 순매도</strong>했고, 기관 역시 금융투자와 사모펀드를 중심으로 <strong>1조 2,253억 원을 순매도</strong>해 양대 메이저가 합산 3조 5,168억 원에 달하는 매도 폭탄을 투하했습니다. 코스닥 시장에서도 외국인(-3,572억 원)과 기관(-2,266억 원)이 동반 매도했습니다. 그러나 <strong>개인 투자자는 코스피에서 1조 8,675억 원, 코스닥에서 5,692억 원 등 합산 2조 4,367억 원을 순매수</strong>하며 지수의 시스템 리스크 확산을 철저히 차단했습니다. 증시 고객예탁금이 68.4조 원으로 고공행진을 유지하는 가운데, 주말 동안 미국 채권금리 5% 돌파 위험이 소멸되고 역외 환율이 하락함에 따라 누적 3.8만 계약에 달하는 <strong>외국인의 코스피200 선물 숏(매도) 포지션이 월요일 장 개장과 함께 대규모 숏커버링(Short Covering) 및 비차익 프로그램 순매수로 전환</strong>될 가능성이 매우 높습니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 3 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-emerald-500"></i> [주요 3개 업종별 흐름 심층 분석] 반도체(수출 270% 폭증+엔비디아 훈풍), 2차전지·바이오(금리 피크아웃 밸류 리레이팅), 금융·에너지(고배당 및 밸류업 캐시카우)
+                        </h4>
+                        <p>
+                            업종별 동향에서는 매크로 환경 변화에 맞춘 주도권 재편과 밸류에이션 매력이 뚜렷하게 부각되고 있습니다.
+                            첫째, <strong>반도체 대표주는 글로벌 유동성 축소에 따른 단기 수급 왜곡을 딛고 월요일 강력한 시초가 갭상승이 예고</strong>됩니다. 9월 11일 <strong>삼성전자는 3.53% 내린 259,500원</strong>, <strong>SK하이닉스는 2.21% 하락한 1,812,000원</strong>으로 마감했으나, 관세청이 발표한 <strong>'9월 1~10일 반도체 수출액'은 전년 동기 대비 270.1% 폭증한 165억 달러</strong>로 역대 최고치를 경신했습니다. 여기에 간밤 뉴욕 증시에서 엔비디아가 3.41% 급등하고 필라델피아 반도체 지수가 2.18% 뛰면서, HBM4 16단 및 차세대 CXL 모듈의 글로벌 공급망을 장악한 한국 반도체 기업들의 이익 가시성이 다시 한번 월가의 조명을 받고 있습니다.
+                            둘째, <strong>2차전지와 바이오 등 성장 섹터는 금리 5% 돌파 공포가 소멸되면서 밸류에이션 리레이팅 구간에 진입</strong>할 것입니다. LG에너지솔루션(443,000원, -1.37%), 삼성SDI(357,500원, -2.85%), 삼성바이오로직스(972,000원, -2.80%), 알테오젠(345,000원, -4.15%) 등은 미 10년물 금리 4.97% 도달에 따른 미래 현금흐름 할인율 상승으로 주간 큰 폭의 조정을 겪었습니다. 그러나 금리가 4.885%로 꺾이고 연준의 9월 금리 동결 확률이 56.4%로 과반을 확보한 만큼, 기술적 과매도 상태에 놓인 대형 성장주들을 중심으로 기관의 낙폭 과대 숏스퀴즈 매수세가 유입될 것으로 판단됩니다.
+                            셋째, <strong>금융 및 정유·에너지 섹터는 고금리·고유가 체제하에서 포트폴리오의 든든한 캐시카우 역할을 지속</strong>하고 있습니다. <strong>KB금융은 2.71% 오른 178,100원에 마감하며 코스피 상위 10대 종목 중 유일하게 52주 신고가를 경신</strong>했고, 신한지주(63,200원, +2.15%)와 주요 손해보험사들 역시 국내 국고채 4%대 안착에 따른 순이자마진(NIM) 확대 및 배당 매력이 지속되고 있습니다. 아울러 국제유가가 배럴당 100달러 선에서 견조하게 유지됨에 따라 S-Oil(74,000원, +3.21%)과 중앙에너비스 등 정유·에너지주도 견고한 실적 모멘텀을 이어갈 것입니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 4 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-binoculars text-purple-500"></i> [시장의 해석과 주초 전망] 매크로 피크아웃(Peak-out) 변곡점 도달: 14일 6,980~7,020선 갭상승 타진 및 9월 FOMC 이전 눈치보기 장세 대비
+                        </h4>
+                        <p>
+                            국내 증시 전문가들은 이번 주말을 기점으로 <strong>"유가 100달러 돌파와 미 국채금리 5% 육박이라는 2대 거시 악재가 정점을 통과(Peak-out)하는 결정적 변곡점에 도달했다"</strong>고 일제히 진단하고 있습니다. 특히 미국 8월 근원 CPI 둔화(3.1%)가 연준의 추가 금리 인상 명분을 약화시켰고, 한국의 9월 1~10일 반도체 수출 대호황(+270.1%)은 국내 상장사들의 하반기 EPS 상향 조정을 강력히 견인하고 있습니다. 따라서 14일(월) KOSPI는 역외 NDF 환율 1,338원대 안정과 미 반도체 훈풍을 바탕으로 시초가 갭상승 출발이 유력하며, 단숨에 6,980~7,020선 회복을 시도할 것으로 전망됩니다. 다만 오는 9월 15~16일 예정된 <strong>미 연준 9월 FOMC 정례회의를 앞두고 주중반에는 관망 심리가 재차 유입될 수 있으므로</strong>, 장초반 급반등 시 추격 매수보다는 포트폴리오 압축과 현금 비중 조율의 기회로 활용하는 영리한 대응이 요구됩니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. 미국 시장 심층 분석 -->
+            <section class="reveal feature-card light-card-hover dark:dark-card-hover bg-white dark:bg-gray-800/50 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-gray-700 shadow-sm">
+                <div class="border-b border-slate-200 dark:border-gray-700 pb-4 mb-6">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="text-2xl">🇺🇸</span> 3. 미국 시장 심층 분석: 근원 CPI 둔화가 연 안도 랠리와 M7 차별화
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        S&P 500·나스닥 4일 연속 하락 마감 후 급반등 요인, M7 종목별 구체적 등락률과 개별 기업 뉴스 및 AI 현금 창출 격차
+                    </p>
+                </div>
+
+                <!-- M7 종목별 상세 현황 테이블 -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm mb-8">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-100 dark:bg-gray-900/80 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-gray-700">
+                            <tr>
+                                <th class="px-5 py-3.5">티커 / 기업명</th>
+                                <th class="px-5 py-3.5 text-right">종가 ($)</th>
+                                <th class="px-5 py-3.5 text-right">등락률 (%)</th>
+                                <th class="px-5 py-3.5">핵심 뉴스 및 주가 상승 배경</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-gray-700 text-slate-700 dark:text-slate-300 font-medium">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="px-2 py-0.5 text-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 rounded font-mono">NVDA</span> 엔비디아
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">$225.80</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-bold bg-red-50 dark:bg-red-900/20">▲ +3.41%</td>
+                                <td class="px-5 py-3.5 text-sm">허깅페이스(130억 달러) 인수 시너지 로드맵 발표, 차세대 B300 출하 가속 및 TSMC 2나노 물량 독점 확보로 반도체 랠리 견인</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-300 rounded font-mono">META</span> 메타 플랫폼스
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">$658.20</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-bold bg-red-50 dark:bg-red-900/20">▲ +2.14%</td>
+                                <td class="px-5 py-3.5 text-sm">사상 최고가 재경신 지속. B2C AI 비서 '뮤즈(Muse)' 인스타 쇼핑 파트너사 1만 개 돌파, 월가 목표주가 $750 상향 잇따라</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="px-2 py-0.5 text-xs bg-slate-200 dark:bg-gray-700 text-slate-700 dark:text-slate-300 rounded font-mono">AAPL</span> 애플
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">$331.40</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-bold bg-red-50 dark:bg-red-900/20">▲ +1.48%</td>
+                                <td class="px-5 py-3.5 text-sm">폴더블 '아이폰 듀오(iPhone Duo)' 사전 예약 역대 최고치 경신, 중국 대기 기간 6~7주로 확대되며 하드웨어 슈퍼사이클 돌입</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="px-2 py-0.5 text-xs bg-cyan-100 dark:bg-cyan-900/40 text-cyan-600 dark:text-cyan-300 rounded font-mono">MSFT</span> 마이크로소프트
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">$501.35</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-bold bg-red-50 dark:bg-red-900/20">▲ +1.81%</td>
+                                <td class="px-5 py-3.5 text-sm">500달러선 단숨에 재탈환, 코파일럿 3.0 엔터프라이즈 자율 워크플로우 발표 및 클라우드 애저(Azure) ARR 250억 달러 돌파</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="px-2 py-0.5 text-xs bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 rounded font-mono">GOOGL</span> 알파벳
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">$338.90</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-bold bg-red-50 dark:bg-red-900/20">▲ +1.89%</td>
+                                <td class="px-5 py-3.5 text-sm">차세대 '제미나이 2.5 울트라' 멀티모달 벤치마크 석권 호평, 유튜브 쇼츠 인-비디오 쇼핑 전환율 35% 급증으로 광고 수익 극대화</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="px-2 py-0.5 text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 rounded font-mono">AMZN</span> 아마존
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">$255.40</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-bold bg-red-50 dark:bg-red-900/20">▲ +1.39%</td>
+                                <td class="px-5 py-3.5 text-sm">유가 진정에 따른 물류비 우려 해소, AWS 생성형 AI 수주 잔고 200억 달러 돌파 발표 및 가을 빅딜 데이 기대감 고조</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                                <td class="px-5 py-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <span class="px-2 py-0.5 text-xs bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 rounded font-mono">TSLA</span> 테슬라
+                                </td>
+                                <td class="px-5 py-3.5 text-right font-mono font-bold text-slate-900 dark:text-white">$366.10</td>
+                                <td class="px-5 py-3.5 text-right font-mono text-red-500 font-bold bg-red-50 dark:bg-red-900/20">▲ +0.70%</td>
+                                <td class="px-5 py-3.5 text-sm">NHTSA 사이버캡 안전성 조사 노이즈 소화, 완전자율주행 FSD V13 북미 정식 배포 및 유럽 승인 절차 진입 소식에 상승 마감</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-base">
+                    <!-- 문단 1 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-trend-up text-emerald-500"></i> [지수 흐름과 매크로 영향] 4거래일 연속 하락 끝낸 극적 숏스퀴즈: S&P 500 7,678선·나스닥 26,458선 급반등
+                        </h4>
+                        <p>
+                            미국 뉴욕 증시는 4거래일간 이어진 스태그플레이션 공포와 금리 발작을 뒤로하고, 주말 직전 극적인 반등 랠리를 펼치며 주간 거래를 마감했습니다. <strong>S&P 500 지수는 전 거래일 대비 86.75포인트(+1.14%) 급등한 7,678.45</strong>를 기록하며 7,600선을 가뿐히 탈환했고, 기술주 중심의 <strong>나스닥 종합지수는 무려 376.40포인트(+1.44%) 치솟은 26,458.12</strong>로 마감했습니다. 다우존스 산업평균지수 역시 374.70포인트(+0.72%) 오른 52,438.80에 안착했습니다. 이번 랠리는 극단적 과매도 구간에서 발표된 8월 소비자물가지수(CPI)가 채권 시장의 5% 돌파 공포를 잠재운 것이 결정적이었습니다. 그동안 헤지펀드들이 누적했던 대규모 숏(공매도) 포지션이 10년물 국채금리 급락(▼8.5bp)과 동시에 급격한 숏스퀴즈(Short Squeeze)로 전환되면서, 대형 빅테크와 반도체 섹터로 막대한 기관 자금이 재유입되었습니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 2 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-microchip text-sky-500"></i> [빅테크 M7 개별 종목 심층 분석] 하드웨어 슈퍼사이클(AAPL·NVDA)과 B2C AI 수익화(META·MSFT·GOOGL)의 질주
+                        </h4>
+                        <p>
+                            M7(매그니피센트 7) 종목들은 AI 기술의 실질적인 수익화(Monetization)와 하드웨어 업그레이드 사이클을 앞세워 일제히 랠리를 펼쳤습니다.
+                            특히 <strong>엔비디아(NVDA)는 3.41% 급등한 225.80달러에 마감</strong>하며 기술주 반등의 선봉에 섰습니다. 오픈소스 AI 커뮤니티 허깅페이스(Hugging Face)를 130억 달러에 전격 인수한 후속 시너지로 엔터프라이즈 전용 AI 소프트웨어 번들 매출이 폭증하고 있으며, 차세대 B300 블랙웰 울트라(Blackwell Ultra)의 조기 출하 소식이 투자 심리를 자극했습니다.
+                            <strong>메타(META)는 2.14% 오른 658.20달러로 사상 최고가를 재경신</strong>했습니다. 인스타그램 및 왓츠앱에 탑재된 대화형 AI 비서 '뮤즈(Muse)' 기반의 원클릭 결제 제휴 기업이 1만 개를 돌파하면서 B2C 커머스 매출이 기하급수적으로 늘고 있습니다.
+                            <strong>애플(AAPL, 331.40달러, +1.48%)</strong>은 첫 폴더블 기기 '아이폰 듀오(iPhone Duo)'의 사전 주문 대기 기간이 중국과 북미에서 6~7주로 급증하며 4년 만의 슈퍼사이클 진입을 알렸고, <strong>마이크로소프트(MSFT, 501.35달러, +1.81%)</strong>는 코파일럿 3.0의 자율 에이전트 기능 공개에 힘입어 500달러 고지를 재탈환했습니다.
+                            <strong>알파벳(GOOGL, 338.90달러, +1.89%)</strong> 역시 제미나이 2.5 울트라의 호평 속에 검색 점유율 방어에 성공했습니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 3 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice-dollar text-teal-500"></i> [실적 이벤트 및 어닝스 트렌드] AI CAPEX 지출의 실질 ARR 회수율 검증과 소프트웨어 레거시와의 디커플링
+                        </h4>
+                        <p>
+                            월가에서는 빅테크 기업들의 분기 실적 이후 AI 설비투자(CAPEX)에 대한 평가 기준이 근본적으로 진화하고 있습니다. 과거에는 단순한 컴퓨팅 파워 투자 발표만으로 주가가 상승했으나, 현재 시장은 <strong>"수천억 달러의 칩 구매 비용이 연간 반복 매출(ARR)로 얼마나 빠르게 전환되는가"</strong>를 엄격히 검증하고 있습니다. 이러한 관점에서 마이크로소프트의 Azure AI ARR 250억 달러 돌파와 아마존 AWS의 생성형 AI 수주 잔고 200억 달러 달성, 메타의 AI 타깃 광고 전환율 32% 개선은 거대한 투자 비용을 정당화하는 확고한 펀더멘털로 작용하고 있습니다. 반면, AI 전환 속도가 더딘 전통 레거시 소프트웨어 및 비(非)AI 클라우드 기업들은 마진 압박에 시달리며 M7 빅테크와의 주가 디커플링(차별화)이 사상 최대로 벌어지고 있습니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 4 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-earth-americas text-purple-500"></i> [시장의 해석과 월가 전망] 주말 글로벌 IB 긴급 진단: "근원 CPI의 기조적 안정화는 4분기 사상 최고가 랠리의 발판"
+                        </h4>
+                        <p>
+                            골드만삭스, JP모건, 모건스탠리 등 월가 주요 투자은행(IB)들은 주말 보고서를 통해 <strong>"8월 근원 CPI(3.1%)의 예상치 하회는 채권 금리 5% 돌파에 따른 주식 밸류에이션 디레이팅(멀티플 축소) 리스크를 완전히 차단했다"</strong>고 분석했습니다. 기술주들의 PER이 역사적 상단에 위치해 있음에도 불구하고, 기저 물가 안정화가 뒷받침된다면 9월 FOMC에서 연준이 금리를 동결(56.4%)하고 완화적 코멘트를 제시할 가능성이 높다는 평가입니다. 만약 파월 연준 의장이 이번 FOMC에서 인플레이션 둔화 추세를 인정하고 금리 인하 사이클의 연속성을 보장한다면, 뉴욕 증시는 9월 계절적 조정을 끝내고 4분기 연말 산타 랠리를 향한 사상 최고치 경신 행진을 재개할 것으로 전망됩니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. 매크로 & 글로벌 이슈 -->
+            <section class="reveal feature-card light-card-hover dark:dark-card-hover bg-white dark:bg-gray-800/50 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-gray-700 shadow-sm">
+                <div class="border-b border-slate-200 dark:border-gray-700 pb-4 mb-6">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="text-2xl">🌍</span> 4. 매크로 & 글로벌 이슈: 금리 5% 상방 저지와 긴축 피크아웃, 환율 안정의 삼박자
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        미 10년물 국채금리 4.88% 급락 배경, 국제유가 101달러선 안정 요인, 9월 FOMC 금리 동결 확률 56% 확대, 원/달러 NDF 1,338원대 분석
+                    </p>
+                </div>
+
+                <div class="space-y-6 text-slate-700 dark:text-slate-300 leading-relaxed text-base">
+                    <!-- 문단 1 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-landmark text-emerald-500"></i> [한미 금리 동향 심층 분석] 미 10년물 국채금리 4.885% 급락과 국고채 3년물 4.014% 안착의 명암
+                        </h4>
+                        <p>
+                            채권 시장에서는 공포의 정점에서 극적인 반전이 일어났습니다. <strong>미국 10년물 국채금리는 주중 4.970%까지 치솟으며 2023년 10월 이후 약 3년 만의 '5.0% 상방 돌파' 공포를 자극했으나, 8월 근원 CPI 발표 직후 8.5bp 급락한 4.885%로 주간 거래를 마쳤습니다.</strong> 정책 금리에 민감한 미 국채 2년물 금리 역시 9.2bp 급락한 4.542%를 기록하며 단기 긴축 공포가 빠르게 수그러들었습니다. 반면 국내 채권 시장에서는 국고채 3년물 금리가 3.8bp 오른 <strong>4.014%로 마감하며 4%대에 진입</strong>했습니다. 이는 한미 기준금리 역전폭(200bp)과 환율 방어 부담, 그리고 국채 발행 증가에 따른 기간 프리미엄 확대를 반영한 결과입니다. 국내 고금리의 4%대 안착은 KB금융 등 대형 금융지주의 순이자마진(NIM)을 방어하는 호재로 작용하는 반면, 한계 중소기업의 회사채 조달 비용 상승과 가계 부채 이자 부담을 가중시키는 이중적 구조를 띠고 있습니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 2 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-money-bill-transfer text-amber-500"></i> [외환시장 동향 및 USD/KRW 환율 전망] 역외 NDF 1,338.50원 급락과 외국인 환차손 우려 해소
+                        </h4>
+                        <p>
+                            외환 시장에서는 원화 가치가 빠르게 안정세를 되찾았습니다. 11일 서울 외환시장 주간 거래 종가는 1,343.80원이었으나, 뉴욕 차액결제선물환(NDF) 시장에서 <strong>원/달러 1개월물은 전일 대비 7.40원 급락한 1,338.50원에 최종 호가</strong>되었습니다. 달러 인덱스(DXY)가 104.8선에서 104.2선으로 반락하고 미 국채금리가 하향 안정된 것이 결정적이었습니다. 환율의 1,340원 하회는 외국인 투자자 입장에서 한국 자산 매수 시 발생할 수 있는 잠재적 환차손(FX Loss) 위험을 크게 낮춰줍니다. 이에 따라 오는 14일 서울 외환시장에서 달러/원 환율은 1,338~1,340원선의 갭다운 출발이 확실시되며, 이는 지난주 2.3조 원을 쏟아낸 외국인 매도세의 급격한 환류를 유도하는 핵심 마중물로 작용할 전망입니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 3 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-oil-well text-rose-500"></i> [국제유가 및 원자재 시장] WTI 배럴당 101.15달러 후퇴 배경: 미국 전략비축유(SPR) 방출 검토와 공급선 리스크 점검
+                        </h4>
+                        <p>
+                            원자재 시장에서는 100달러를 돌파하며 증시를 짓누르던 국제유가가 한숨을 돌렸습니다. <strong>WTI(서부 텍사스산 원유) 선물 가격은 전 거래일 대비 1.35달러(-1.30%) 하락한 배럴당 101.15달러에 마감</strong>했고, 브렌트유 역시 104.20달러(-1.18%)로 후퇴했습니다. 미국 백악관 국가경제위원회(NEC)가 휘발유 가격 급등을 억제하기 위해 3,000만 배럴 규모의 전략비축유(SPR) 추가 방출을 검토 중이라는 소식이 전해진 데다, 주말을 앞두고 투기적 롱 포지션의 차익실현 매물이 출회된 영향입니다. 비록 호르무즈 해협의 지정학적 군사 긴장감이 완전히 해소되지 않아 100달러선 지지력은 여전히 견고하지만, '유가 120달러 폭등'이라는 최악의 오일쇼크 시나리오는 단기적으로 차단되었다는 평가가 우세합니다.
+                        </p>
+                    </div>
+
+                    <!-- 문단 4 -->
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-check text-sky-500"></i> [주요 경제지표 결과값 종합 및 차주 FOMC 슈퍼위크] 8월 CPI/PPI 종합 진단 및 9월 15~16일 FOMC 점도표 관전 포인트
+                        </h4>
+                        <p>
+                            지난주 발표된 8월 경제지표는 '에너지발 헤드라인 반등 vs 기저 근원 인플레 안정'으로 요약됩니다. <strong>8월 헤드라인 CPI는 유가 급등 영향으로 전년 동월 대비 3.6%로 반등</strong>했고 생산자물가지수(PPI) 역시 5.4%를 기록했으나, 연준이 정책 결정 시 가장 신뢰하는 <strong>근원 CPI(식품·에너지 제외)는 전년 대비 3.1% 상승에 그치며 시장 예상치(3.2%)를 하회</strong>했습니다. 이에 따라 시카고상품거래소(CME) 페드워치에 반영된 <strong>9월 FOMC(15~16일) 기준금리 동결 확률은 56.4%로 과반을 회복</strong>했으며, 25bp 인상 확률은 43.6%로 낮아졌습니다. 차주 글로벌 금융시장은 9월 15~16일 FOMC 회의에서 공개될 <strong>연준 위원들의 금리 점도표(Dot Plot)와 제롬 파월 의장의 기자회견</strong>, 그리고 15일 발표될 중국 8월 산업생산 및 소매판매 지표에 모든 시선을 집중할 것입니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 투자 시사점 & 전략 -->
+            <section class="reveal feature-card light-card-hover dark:dark-card-hover bg-white dark:bg-gray-800/50 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-gray-700 shadow-sm">
+                <div class="border-b border-slate-200 dark:border-gray-700 pb-4 mb-6">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                        <span class="text-2xl">💡</span> 5. 투자 시사점 및 향후 1주 전략 (Actionable Portfolio Strategy)
+                    </h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                        차주 9월 FOMC 슈퍼위크 대비: 3대 핵심 기회 요인과 리스크 요인 및 바벨(Barbell) 포트폴리오 최적 배분안
+                    </p>
+                </div>
+
+                <!-- 기회 vs 리스크 2열 그리드 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- 기회 요인 카드 -->
+                    <div class="p-6 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/60 shadow-sm">
+                        <h4 class="text-lg font-bold text-emerald-800 dark:text-emerald-300 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-500"></i> 주목해야 할 기회 요인 (Opportunities)
+                        </h4>
+                        <ul class="space-y-3.5 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></span>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">미 국채 10년물 금리 5% 상방 저지(4.885%):</strong> 
+                                    글로벌 자산시장의 최대 뇌관이었던 장기채 5% 돌파 위협이 차단됨에 따라, 기술주 및 성장주 전반의 기간 프리미엄 축소와 밸류에이션 리레이팅 안도 랠리 본격화.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></span>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">한국 9월 1~10일 반도체 수출 270.1% 폭증(+165억 달러):</strong> 
+                                    KOSPI 6,800선 지지력을 확인한 삼성전자(25.9만 원)와 SK하이닉스(181만 원)에 대해 월요일 외국인 선물 숏커버링 및 대규모 비차익 프로그램 매수 유입 기대.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></span>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">역외 NDF 환율 1,338원대 안정 및 외국인 환차손 해소:</strong> 
+                                    1,345.90원에서 1,338.50원으로 급락한 원/달러 환율은 외국인 투자자의 신흥국 이탈 요인을 불식시키며 코스피 7,000선 조기 탈환의 핵심 수급 엔진으로 작용.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 리스크 요인 카드 -->
+                    <div class="p-6 rounded-2xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-800/60 shadow-sm">
+                        <h4 class="text-lg font-bold text-rose-800 dark:text-rose-300 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> 철저히 경계할 리스크 요인 (Risks)
+                        </h4>
+                        <ul class="space-y-3.5 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0"></span>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">9월 15~16일 FOMC 점도표 상방 조정 리스크:</strong> 
+                                    금리 동결(56.4%) 기대가 우세하나, 8월 헤드라인 PPI(+5.4%)를 고려해 연준 위원들이 연내 추가 1회 인상을 시사하는 매파적 점도표를 발표할 가능성 상존.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0"></span>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">국제유가 100달러선 상회 고착화와 제조원가 부담:</strong> 
+                                    WTI가 101달러대로 반락했으나 호르무즈 해협의 군사적 긴장이 잔존하여 석유화학, 항공, 해운 등 에너지 취약 업종의 하반기 마진 압박 지속 우려.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0"></span>
+                                <div>
+                                    <strong class="text-slate-900 dark:text-white">국고채 3년물 4.0% 돌파에 따른 내수 소비 및 가계부채 부담:</strong> 
+                                    국내 국고채 금리가 4.014%에 도달함에 따라 주택담보대출 및 기업 회사채 조달 금리가 상승하여 내수 경기 회복을 지연시킬 수 있는 구조적 뇌관 상존.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 주간 액션 플랜 -->
+                <div class="p-6 rounded-2xl bg-slate-50 dark:bg-gray-900/60 border border-slate-200 dark:border-gray-700">
+                    <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-sky-500"></i> 향후 1주일 포트폴리오 운용 가이드: "주도주 공격(45%) + 고배당 방어(30%) + FOMC 대비 현금(25%)"
+                    </h4>
+                    <div class="space-y-4 text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+                        <p>
+                            <strong>1. 반도체 및 AI 현금 창출 1등주 비중 확대 (비중 45%): 실물 실적 확증 기업 집중</strong><br>
+                            KOSPI 6,800선의 바닥 확인과 9월 1~10일 수출 폭증(+270.1%)으로 실적이 입증된 대장주 삼성전자(259,500원선)와 SK하이닉스(181만 원선)는 월요일 시초가부터 분할 매수 비중을 공격적으로 유지합니다. 미국 시장에서는 인프라 단계를 넘어 B2C 커머스 수익화를 증명한 메타(META, $658선)와 하드웨어 슈퍼사이클의 애플(AAPL, $331선), 엔비디아(NVDA, $225선)로의 포트폴리오 압축을 지속합니다.
+                        </p>
+                        <p>
+                            <strong>2. 고배당 밸류업 & 인플레 방어주 (비중 30%): 금융 지주 및 에너지 인프라</strong><br>
+                            국고채 4% 돌파와 유가 100달러 시대의 수혜주인 금융지주(KB금융 178,100원선 신고가, 신한지주 63,200원선)와 정유주(S-Oil 74,000원선), 그리고 배당수익률 6% 이상의 저PBR 밸류업 종목을 포트폴리오의 탄탄한 안전판으로 유지하여 차주 FOMC 전후 발생할 수 있는 매크로 변동성을 철저히 헤지합니다.
+                        </p>
+                        <p>
+                            <strong>3. 현금성 자산 버퍼 확보 (비중 25%): 9월 15~16일 FOMC 결과 확인 후 추가 집행</strong><br>
+                            비록 근원 CPI 둔화로 위험자산 안도 랠리가 시작되었으나, 오는 9월 15~16일 FOMC에서 연준이 발표할 점도표와 제롬 파월 의장의 기자회견 발언을 최종 확인할 때까지는 25%의 현금성 자산(MMF, 달러 단기채 등)을 확고히 유지합니다. 파월 의장이 중립 이상의 완화적 메시지를 낼 경우, 보유 현금을 낙폭 과대 2차전지(LG에너지솔루션) 및 바이오(삼성바이오로직스, 알테오젠) 대표주로 신속히 전환 투입하는 기동성 있는 대응을 권고합니다.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+    
+    <!-- Footer Section -->
+    <footer class="border-t border-slate-200 dark:border-gray-800 py-10 mt-auto bg-white dark:bg-gray-900/50">
+        <div class="max-w-7xl mx-auto px-6 sm:px-12 lg:px-24 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 text-sm font-medium">
+                <i class="fa-solid fa-bolt text-xl"></i>
+                <span>&copy; 2026 Invest Insight. Open source project.</span>
+            </div>
+            <div class="text-slate-400 dark:text-slate-500 text-xs">
+                Generated by AI Coding Assistant
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Scroll reveal animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        setTimeout(reveal, 100);
+    </script>
+</body>
+</html>
