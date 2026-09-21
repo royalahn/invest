@@ -130,6 +130,7 @@ agy --dangerously-skip-permissions \
 |--------|----------|------|
 | `-p` (또는 `--print`) | **필수** | 대화형이 아닌 단발성 실행 |
 | `--dangerously-skip-permissions` | **필수** | 파일 생성, git 명령 등의 권한 요청을 자동 승인 |
+| `--add-dir .` | **필수 (CI 환경)** | Jenkins 작업 디렉토리를 agy의 워크스페이스로 강제 지정 |
 | `--print-timeout` | **권장** | 심층 리포트 생성 시 기본 5분으로 부족할 수 있음. 10~15분 권장 |
 
 > ⚠️ **주의**: `--dangerously-skip-permissions`는 모든 파일 I/O와 명령 실행을 자동 승인합니다. 프롬프트가 의도한 작업만 수행하도록 신중하게 설계해야 합니다.
@@ -262,6 +263,7 @@ echo "=========================================="
 # ── Step 3: agy 실행 ──
 echo "🤖 agy 실행 중... (타임아웃: 15분)"
 agy --dangerously-skip-permissions \
+    --add-dir . \
     --print-timeout 15m0s \
     -p "$(cat <<PROMPT
 오늘은 ${TODAY}이야. 한국과 미국 주식시장의 투자 인사이트 일일 리포트를 작성해줘.
